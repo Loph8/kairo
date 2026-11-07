@@ -1,0 +1,10 @@
+{
+  "name": "golden-hour",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test supabase/functions/_shared",
+    "sim": "bun run sim/learning_sim.ts",
+    "story": "bun run sim/story.ts"
+  }
+}
