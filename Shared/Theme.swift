@@ -2,7 +2,7 @@ import SwiftUI
 import KairoCore
 
 /// Sunrise palette. Dynamic colors adapt to light/dark without an asset catalog.
-enum GH {
+enum Palette {
     private static func dyn(_ light: UInt32, _ dark: UInt32) -> Color {
         Color(UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: dark) : UIColor(hex: light) })
     }
@@ -43,10 +43,10 @@ extension AvailabilityLevel {
     }
     var tint: Color {
         switch self {
-        case .likelyFree: return GH.green
-        case .maybeFree: return GH.amber
-        case .unlikely, .learning: return GH.neutral
-        case .busy, .quietHours: return GH.red
+        case .likelyFree: return Palette.green
+        case .maybeFree: return Palette.amber
+        case .unlikely, .learning: return Palette.neutral
+        case .busy, .quietHours: return Palette.red
         }
     }
 }
@@ -69,10 +69,10 @@ struct Avatar: View {
     var body: some View {
         Text(initials.isEmpty ? "?" : initials)
             .font(.system(size: size * 0.42, weight: .bold, design: .rounded))
-            .foregroundStyle(GH.ink)
+            .foregroundStyle(Palette.ink)
             .frame(width: size, height: size)
-            .background(Circle().fill(GH.peach))
-            .overlay(Circle().strokeBorder(GH.apricot.opacity(0.6), lineWidth: 1))
+            .background(Circle().fill(Palette.peach))
+            .overlay(Circle().strokeBorder(Palette.apricot.opacity(0.6), lineWidth: 1))
             .accessibilityHidden(true)
     }
 }

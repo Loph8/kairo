@@ -8,7 +8,7 @@ struct KairoLiveActivity: Widget {
         ActivityConfiguration(for: KairoActivityAttributes.self) { context in
             LockScreenActivityView(context: context)
                 .activityBackgroundTint(Color(UIColor(hex: 0xFFE8D2)))
-                .activitySystemActionForegroundColor(GH.ink)
+                .activitySystemActionForegroundColor(Palette.ink)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
@@ -30,11 +30,11 @@ struct KairoLiveActivity: Widget {
                     }
                 }
             } compactLeading: {
-                Image(systemName: "sun.horizon.fill").foregroundStyle(GH.apricot)
+                Image(systemName: "sun.horizon.fill").foregroundStyle(Palette.apricot)
             } compactTrailing: {
                 CountdownText(state: context.state, font: .caption2).frame(maxWidth: 48)
             } minimal: {
-                Image(systemName: context.state.booking == .canceled ? "slash.circle" : "phone.fill").foregroundStyle(GH.apricot)
+                Image(systemName: context.state.booking == .canceled ? "slash.circle" : "phone.fill").foregroundStyle(Palette.apricot)
             }
             .widgetURL(DeepLink.proposal(context.attributes.proposalID).url)
         }
@@ -69,7 +69,7 @@ struct LockScreenActivityView: View {
     let context: ActivityViewContext<KairoActivityAttributes>
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "sun.horizon.fill").font(.title2).foregroundStyle(GH.apricot)
+            Image(systemName: "sun.horizon.fill").font(.title2).foregroundStyle(Palette.apricot)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Call with \(context.attributes.personName)").font(.headline).foregroundStyle(Color(UIColor(hex: 0x3B2A20)))
                 Text(context.attributes.scheduledLabel).font(.subheadline)

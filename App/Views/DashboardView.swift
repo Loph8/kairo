@@ -23,7 +23,7 @@ struct DashboardView: View {
                 }
                 .padding(16)
             }
-            .background(GH.sunrise.ignoresSafeArea())
+            .background(Palette.sunrise.ignoresSafeArea())
             .navigationTitle("Kairo")
             .navigationDestination(for: DeepLink.self) { link in
                 if case .member(let id) = link, let p = model.state.person(id) { MemberDetailView(person: p) }
@@ -33,16 +33,16 @@ struct DashboardView: View {
 
     var header: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Find a little time together.").font(.title3.weight(.semibold)).foregroundStyle(GH.ink)
+            Text("Find a little time together.").font(.title3.weight(.semibold)).foregroundStyle(Palette.ink)
             if let me = model.viewer {
-                Text("You're \(me.name) in \(me.city)").font(.subheadline).foregroundStyle(GH.inkSoft)
+                Text("You're \(me.name) in \(me.city)").font(.subheadline).foregroundStyle(Palette.inkSoft)
             }
             Label(model.state.settings.simulateOffline
                   ? SyncStatus.offlinePending(model.state.settings.pendingSyncCount).label : SyncStatus.localOnly.label,
                   systemImage: model.state.settings.simulateOffline ? "icloud.slash" : "internaldrive")
-                .font(.caption).foregroundStyle(GH.inkSoft)
+                .font(.caption).foregroundStyle(Palette.inkSoft)
             if model.state.isDemo {
-                Label("Demo family · synthetic history", systemImage: "flask").font(.caption).foregroundStyle(GH.amber)
+                Label("Demo family · synthetic history", systemImage: "flask").font(.caption).foregroundStyle(Palette.amber)
             }
         }
     }
@@ -50,10 +50,10 @@ struct DashboardView: View {
     var emptyState: some View {
         Card {
             VStack(spacing: 8) {
-                Image(systemName: "person.2.slash").font(.largeTitle).foregroundStyle(GH.apricot)
+                Image(systemName: "person.2.slash").font(.largeTitle).foregroundStyle(Palette.apricot)
                 Text("No family yet").font(.headline)
                 Text("Invitations are deferred in this build. Load the demo family from Settings → Demo controls.")
-                    .font(.subheadline).foregroundStyle(GH.inkSoft).multilineTextAlignment(.center)
+                    .font(.subheadline).foregroundStyle(Palette.inkSoft).multilineTextAlignment(.center)
             }.frame(maxWidth: .infinity)
         }
     }
@@ -63,8 +63,8 @@ struct DashboardView: View {
             if let b = model.myBusy, let me = model.viewer {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("You're Busy until \(TimeKit.formatTime(b.end, me.timeZone, use24Hour: model.state.settings.use24Hour))",
-                          systemImage: "moon.zzz.fill").font(.subheadline.weight(.semibold)).foregroundStyle(GH.red)
-                    Text("This overrides any estimate until it ends.").font(.caption).foregroundStyle(GH.inkSoft)
+                          systemImage: "moon.zzz.fill").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.red)
+                    Text("This overrides any estimate until it ends.").font(.caption).foregroundStyle(Palette.inkSoft)
                     HStack {
                         Button("Clear") { Task { await model.clearBusy() } }
                         Menu("Change") {
@@ -78,7 +78,7 @@ struct DashboardView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Need quiet?").font(.subheadline.weight(.semibold))
-                        Text("Set Busy for an hour. Everyone sees you're unavailable.").font(.caption).foregroundStyle(GH.inkSoft)
+                        Text("Set Busy for an hour. Everyone sees you're unavailable.").font(.caption).foregroundStyle(Palette.inkSoft)
                     }
                     Spacer()
                     Button { Task { await model.setBusy() } } label: { Label("Busy 1 hr", systemImage: "moon.zzz") }
@@ -92,7 +92,7 @@ struct DashboardView: View {
         let open = model.state.proposals.filter { $0.participants.contains(model.state.viewerID) && ($0.status.isOpen || $0.status == .confirmed) }
             .sorted { $0.start < $1.start }
         if !open.isEmpty {
-            Text("Next connection").font(.headline).foregroundStyle(GH.ink)
+            Text("Next connection").font(.headline).foregroundStyle(Palette.ink)
             ForEach(open.prefix(3)) { ProposalCard(proposal: $0, now: now) }
         }
     }
@@ -115,7 +115,7 @@ struct MemberCard: View {
                         if let f = person.flag { Text(f).accessibilityHidden(true) }   // decorative only
                     }
                     Text("\(TimeKit.dayLabel(now, reference: model.effectiveNow(), in: person.timeZone)) · \(person.city)")
-                        .font(.caption).foregroundStyle(GH.inkSoft).lineLimit(1)
+                        .font(.caption).foregroundStyle(Palette.inkSoft).lineLimit(1)
                 }
                 Spacer(minLength: 8)
                 VStack(alignment: .trailing, spacing: 3) {
@@ -124,7 +124,7 @@ struct MemberCard: View {
                     AvailabilityBadge(level: level)
                 }
             }
-            .foregroundStyle(GH.ink)
+            .foregroundStyle(Palette.ink)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(person.name), \(TimeKit.formatTime(now, person.timeZone, use24Hour: model.state.settings.use24Hour)) in \(person.city), \(level.label)")

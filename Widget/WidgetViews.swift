@@ -46,10 +46,10 @@ struct WidgetHeader: View {
     let entry: GoldenEntry
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: "sun.horizon.fill").foregroundStyle(GH.apricot).widgetAccentable()
-            Text("Kairo").font(.caption.weight(.semibold)).foregroundStyle(GH.ink)
+            Image(systemName: "sun.horizon.fill").foregroundStyle(Palette.apricot).widgetAccentable()
+            Text("Kairo").font(.caption.weight(.semibold)).foregroundStyle(Palette.ink)
             Spacer(minLength: 4)
-            FreshnessLabel(entry: entry).font(.system(size: 9, weight: .medium)).foregroundStyle(GH.inkSoft)
+            FreshnessLabel(entry: entry).font(.system(size: 9, weight: .medium)).foregroundStyle(Palette.inkSoft)
         }
     }
 }
@@ -65,10 +65,10 @@ struct BookControl: View {
                 Label(proposal.state == .awaitingYou ? "Confirm" : "Book", systemImage: "calendar.badge.plus")
             }
         case .awaitingOther:
-            Label("Waiting for \(proposal.personName)", systemImage: "hourglass").foregroundStyle(GH.amber)
+            Label("Waiting for \(proposal.personName)", systemImage: "hourglass").foregroundStyle(Palette.amber)
         case .confirmed:
             Link(destination: DeepLink.proposal(proposal.id).url) { Label("Booked", systemImage: "checkmark.seal.fill") }
-                .foregroundStyle(GH.green)
+                .foregroundStyle(Palette.green)
         default:
             Link(destination: DeepLink.schedule.url) { Label("Schedule", systemImage: "calendar") }
         }
@@ -92,11 +92,11 @@ struct EmptyStateView: View {
     let status: EntryStatus
     var body: some View {
         VStack(spacing: 6) {
-            Image(systemName: "sun.horizon.fill").font(.title2).foregroundStyle(GH.apricot).widgetAccentable()
+            Image(systemName: "sun.horizon.fill").font(.title2).foregroundStyle(Palette.apricot).widgetAccentable()
             Text(title).font(.footnote.weight(.semibold)).multilineTextAlignment(.center)
-            Text(detail).font(.caption2).foregroundStyle(GH.inkSoft).multilineTextAlignment(.center)
+            Text(detail).font(.caption2).foregroundStyle(Palette.inkSoft).multilineTextAlignment(.center)
         }
-        .foregroundStyle(GH.ink)
+        .foregroundStyle(Palette.ink)
         .widgetURL(DeepLink.dashboard.url)
     }
     var title: String {
@@ -144,7 +144,7 @@ struct MediumView: View {
                     BusyControl(entry: entry)
                 }
                 .font(.caption.weight(.semibold))
-                .buttonStyle(.bordered).tint(GH.apricot).controlSize(.mini)
+                .buttonStyle(.bordered).tint(Palette.apricot).controlSize(.mini)
                 .lineLimit(1).minimumScaleFactor(0.7)
             }
         } else {
@@ -160,9 +160,9 @@ struct MemberRow: View {
         HStack(spacing: 5) {
             Avatar(initials: person.initials, size: 20)
             Text("\(person.relationship) · \(person.city)").font(.caption2.weight(.medium))
-                .lineLimit(1).truncationMode(.tail).foregroundStyle(GH.ink)
+                .lineLimit(1).truncationMode(.tail).foregroundStyle(Palette.ink)
             Spacer(minLength: 2)
-            Text(entry.time(person)).font(.caption2.monospacedDigit()).foregroundStyle(GH.inkSoft).lineLimit(1)
+            Text(entry.time(person)).font(.caption2.monospacedDigit()).foregroundStyle(Palette.inkSoft).lineLimit(1)
             AvailabilityBadge(level: entry.level(person), compact: true).minimumScaleFactor(0.7)
         }
         .accessibilityElement(children: .ignore)
@@ -176,19 +176,19 @@ struct NextBlock: View {
     var body: some View {
         if let p = entry.focus, let n = entry.next {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Next with \(p.relationship)").font(.caption2.weight(.semibold)).foregroundStyle(GH.amber)
-                Text(entry.yourTime(n.start)).font(.footnote.weight(.bold)).foregroundStyle(GH.ink)
+                Text("Next with \(p.relationship)").font(.caption2.weight(.semibold)).foregroundStyle(Palette.amber)
+                Text(entry.yourTime(n.start)).font(.footnote.weight(.bold)).foregroundStyle(Palette.ink)
                     .lineLimit(2).minimumScaleFactor(0.8)
                 Text("\(entry.theirTime(n.start, p)) for \(p.relationship)").font(.system(size: 10))
-                    .foregroundStyle(GH.inkSoft).lineLimit(2)
+                    .foregroundStyle(Palette.inkSoft).lineLimit(2)
             }
-            .padding(6).background(RoundedRectangle(cornerRadius: 10).fill(GH.peach.opacity(0.45)))
+            .padding(6).background(RoundedRectangle(cornerRadius: 10).fill(Palette.peach.opacity(0.45)))
             .widgetURL(DeepLink.proposal(n.id).url)
             .accessibilityElement(children: .combine)
         } else {
             VStack(alignment: .leading, spacing: 2) {
-                Text("No suggestion yet").font(.caption2.weight(.semibold)).foregroundStyle(GH.inkSoft)
-                Text("Open the app to find a time.").font(.system(size: 10)).foregroundStyle(GH.inkSoft)
+                Text("No suggestion yet").font(.caption2.weight(.semibold)).foregroundStyle(Palette.inkSoft)
+                Text("Open the app to find a time.").font(.system(size: 10)).foregroundStyle(Palette.inkSoft)
             }
         }
     }
@@ -212,15 +212,15 @@ struct SmallView: View {
                 Spacer(minLength: 0)
                 if let n = entry.next {
                     Text("Next · \(entry.yourTime(n.start))").font(.caption2.weight(.medium)).lineLimit(2)
-                        .foregroundStyle(GH.inkSoft)
+                        .foregroundStyle(Palette.inkSoft)
                     BookControl(entry: entry, proposal: n).font(.caption2.weight(.semibold))
-                        .buttonStyle(.bordered).tint(GH.apricot).controlSize(.mini)
+                        .buttonStyle(.bordered).tint(Palette.apricot).controlSize(.mini)
                 } else {
                     Link(destination: DeepLink.call(p.id).url) { Label("Call", systemImage: "phone.fill") }
                         .font(.caption2.weight(.semibold))
                 }
             }
-            .foregroundStyle(GH.ink)
+            .foregroundStyle(Palette.ink)
             .accessibilityElement(children: .contain)
         } else {
             EmptyStateView(status: entry.status)
@@ -241,25 +241,25 @@ struct LargeView: View {
                 }
                 Divider()
                 if let p = entry.focus {
-                    Text("Suggested times with \(p.relationship)").font(.caption.weight(.semibold)).foregroundStyle(GH.amber)
+                    Text("Suggested times with \(p.relationship)").font(.caption.weight(.semibold)).foregroundStyle(Palette.amber)
                     let list = s.proposals.filter { $0.personID == p.id && [.suggested, .awaitingYou, .awaitingOther, .confirmed].contains($0.state) }
                         .sorted { $0.start < $1.start }.prefix(3)
                     if list.isEmpty {
-                        Text("No suggestions right now. Open the app to refresh.").font(.caption).foregroundStyle(GH.inkSoft)
+                        Text("No suggestions right now. Open the app to refresh.").font(.caption).foregroundStyle(Palette.inkSoft)
                     }
                     ForEach(Array(list)) { w in
                         HStack {
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(entry.yourTime(w.start)).font(.footnote.weight(.semibold))
-                                Text("\(entry.theirTime(w.start, p)) for \(p.relationship)").font(.caption2).foregroundStyle(GH.inkSoft)
+                                Text("\(entry.theirTime(w.start, p)) for \(p.relationship)").font(.caption2).foregroundStyle(Palette.inkSoft)
                             }
                             Spacer()
                             VStack(alignment: .trailing, spacing: 2) {
                                 Label(w.state.label(otherName: p.relationship), systemImage: w.state.symbol)
-                                    .font(.caption2.weight(.semibold)).foregroundStyle(w.state == .confirmed ? GH.green : GH.amber)
+                                    .font(.caption2.weight(.semibold)).foregroundStyle(w.state == .confirmed ? Palette.green : Palette.amber)
                                 if w.state == .suggested || w.state == .awaitingYou {
                                     Button(intent: BookProposalIntent(proposalID: w.id)) { Text(w.state == .awaitingYou ? "Confirm" : "Book") }
-                                        .buttonStyle(.bordered).tint(GH.apricot).controlSize(.mini)
+                                        .buttonStyle(.bordered).tint(Palette.apricot).controlSize(.mini)
                                 }
                             }
                         }
@@ -273,9 +273,9 @@ struct LargeView: View {
                     }
                     BusyControl(entry: entry)
                 }
-                .font(.caption.weight(.semibold)).buttonStyle(.bordered).tint(GH.apricot).controlSize(.small)
+                .font(.caption.weight(.semibold)).buttonStyle(.bordered).tint(Palette.apricot).controlSize(.small)
             }
-            .foregroundStyle(GH.ink)
+            .foregroundStyle(Palette.ink)
         } else {
             EmptyStateView(status: entry.status)
         }
@@ -358,7 +358,7 @@ struct GoldenWidgetEntryView: View {
             }
         }
         .containerBackground(for: .widget) {
-            if family.isAccessory { Color.clear } else { GH.sunrise }
+            if family.isAccessory { Color.clear } else { Palette.sunrise }
         }
     }
 }

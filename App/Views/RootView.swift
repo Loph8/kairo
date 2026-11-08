@@ -8,7 +8,7 @@ struct RootView: View {
         @Bindable var model = model
         Group {
             if !model.loaded {
-                ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity).background(GH.ivory)
+                ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity).background(Palette.ivory)
             } else if !model.state.settings.onboardingComplete {
                 OnboardingView()
             } else {
@@ -22,7 +22,7 @@ struct RootView: View {
                 }
             }
         }
-        .background(GH.ivory.ignoresSafeArea())
+        .background(Palette.ivory.ignoresSafeArea())
         .sheet(item: Binding(get: { model.callPersonID.map(CallTarget.init) }, set: { if $0 == nil { model.callEnded() } })) { t in
             CallView(personID: t.id)
         }
@@ -44,16 +44,16 @@ struct Card<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
         content.padding(16).frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(GH.card))
-            .shadow(color: GH.ink.opacity(0.06), radius: 8, y: 2)
+            .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Palette.card))
+            .shadow(color: Palette.ink.opacity(0.06), radius: 8, y: 2)
     }
 }
 
 struct BannerView: View {
     let text: String
     var body: some View {
-        Label(text, systemImage: "info.circle").font(.footnote).foregroundStyle(GH.ink)
+        Label(text, systemImage: "info.circle").font(.footnote).foregroundStyle(Palette.ink)
             .padding(12).frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 14).fill(GH.peach.opacity(0.6)))
+            .background(RoundedRectangle(cornerRadius: 14).fill(Palette.peach.opacity(0.6)))
     }
 }

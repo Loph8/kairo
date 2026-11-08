@@ -2,7 +2,7 @@ import AppIntents
 import WidgetKit
 import KairoCore
 
-enum GHIntentError: Error, CustomLocalizedStringResourceConvertible {
+enum KairoIntentError: Error, CustomLocalizedStringResourceConvertible {
     case storageUnavailable, notSetUp, invalidID
     var localizedStringResource: LocalizedStringResource {
         switch self {
@@ -25,10 +25,10 @@ struct BookProposalIntent: AppIntent {
     init(proposalID: String) { self.proposalID = proposalID }
 
     func perform() async throws -> some IntentResult {
-        guard DeepLink.validID(proposalID) else { throw GHIntentError.invalidID }
-        guard let repo = AppGroup.sharedRepository() else { throw GHIntentError.storageUnavailable }
+        guard DeepLink.validID(proposalID) else { throw KairoIntentError.invalidID }
+        guard let repo = AppGroup.sharedRepository() else { throw KairoIntentError.storageUnavailable }
         let state = await repo.loadState()
-        guard !state.viewerID.isEmpty else { throw GHIntentError.notSetUp }
+        guard !state.viewerID.isEmpty else { throw KairoIntentError.notSetUp }
         _ = try await repo.confirm(proposalID: proposalID, as: state.viewerID)
         WidgetCenter.shared.reloadAllTimelines()
         // A Live Activity cannot be requested from here (app not foreground). The repository sets
@@ -47,9 +47,9 @@ struct BusyIntent: AppIntent {
     init(minutes: Int) { self.minutes = minutes }
 
     func perform() async throws -> some IntentResult {
-        guard let repo = AppGroup.sharedRepository() else { throw GHIntentError.storageUnavailable }
+        guard let repo = AppGroup.sharedRepository() else { throw KairoIntentError.storageUnavailable }
         let state = await repo.loadState()
-        guard !state.viewerID.isEmpty else { throw GHIntentError.notSetUp }
+        guard !state.viewerID.isEmpty else { throw KairoIntentError.notSetUp }
         try await repo.setBusy(personID: state.viewerID, minutes: minutes, replaceExisting: false)
         WidgetCenter.shared.reloadAllTimelines()
         return .result()
@@ -61,9 +61,9 @@ struct ClearBusyIntent: AppIntent {
     static var openAppWhenRun = false
     init() {}
     func perform() async throws -> some IntentResult {
-        guard let repo = AppGroup.sharedRepository() else { throw GHIntentError.storageUnavailable }
+        guard let repo = AppGroup.sharedRepository() else { throw KairoIntentError.storageUnavailable }
         let state = await repo.loadState()
-        guard !state.viewerID.isEmpty else { throw GHIntentError.notSetUp }
+        guard !state.viewerID.isEmpty else { throw KairoIntentError.notSetUp }
         try await repo.clearBusy(personID: state.viewerID)
         WidgetCenter.shared.reloadAllTimelines()
         return .result()

@@ -19,14 +19,14 @@ struct ScheduleView: View {
                     if !past.isEmpty { section("Earlier", Array(past), now, empty: "") }
                 }.padding(16)
             }
-            .background(GH.sunrise.ignoresSafeArea())
+            .background(Palette.sunrise.ignoresSafeArea())
             .navigationTitle("Schedule")
         }
     }
 
     @ViewBuilder func section(_ title: String, _ list: [Proposal], _ now: Date, empty: String) -> some View {
-        Text(title).font(.headline).foregroundStyle(GH.ink)
-        if list.isEmpty { Text(empty).font(.subheadline).foregroundStyle(GH.inkSoft) }
+        Text(title).font(.headline).foregroundStyle(Palette.ink)
+        if list.isEmpty { Text(empty).font(.subheadline).foregroundStyle(Palette.inkSoft) }
         ForEach(list) { ProposalCard(proposal: $0, now: now) }
     }
 }
@@ -52,7 +52,7 @@ struct ProposalCard: View {
                     if let p = s.person(id) {
                         HStack {
                             Text(id == me ? "You" : p.relationship).font(.subheadline.weight(.semibold))
-                            if proposal.confirmations[id] != nil { Image(systemName: "checkmark.circle.fill").foregroundStyle(GH.green).accessibilityLabel("confirmed") }
+                            if proposal.confirmations[id] != nil { Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.green).accessibilityLabel("confirmed") }
                             Spacer()
                             Text(TimeKit.describe(proposal.start, in: p.timeZone, reference: now, use24Hour: s.settings.use24Hour))
                                 .font(.subheadline.monospacedDigit())
@@ -60,19 +60,19 @@ struct ProposalCard: View {
                     }
                 }
                 if !proposal.explanation.isEmpty {
-                    Text(proposal.explanation).font(.caption).foregroundStyle(GH.inkSoft)
+                    Text(proposal.explanation).font(.caption).foregroundStyle(Palette.inkSoft)
                 }
                 actions(state, otherName)
-            }.foregroundStyle(GH.ink)
+            }.foregroundStyle(Palette.ink)
         }
         .accessibilityElement(children: .contain)
     }
 
     func tint(_ s: ViewerBookingState) -> Color {
         switch s {
-        case .confirmed, .completed: return GH.green
-        case .declined, .expired, .canceled: return GH.red
-        default: return GH.amber
+        case .confirmed, .completed: return Palette.green
+        case .declined, .expired, .canceled: return Palette.red
+        default: return Palette.amber
         }
     }
 
@@ -88,7 +88,7 @@ struct ProposalCard: View {
                 Button("Decline", role: .destructive) { Task { await model.decline(proposal.id) } }.buttonStyle(.bordered)
             }
         case .awaitingOther:
-            Text("Your confirmation is saved. This is only booked once \(otherName) confirms too.").font(.footnote).foregroundStyle(GH.inkSoft)
+            Text("Your confirmation is saved. This is only booked once \(otherName) confirms too.").font(.footnote).foregroundStyle(Palette.inkSoft)
             Button("Cancel", role: .destructive) { Task { await model.cancel(proposal.id) } }.font(.footnote)
         case .confirmed:
             HStack {
@@ -98,7 +98,7 @@ struct ProposalCard: View {
                 Button("Cancel", role: .destructive) { Task { await model.cancel(proposal.id) } }.buttonStyle(.bordered)
             }.font(.footnote)
         case .expired:
-            Text("This time passed or became stale. Fresh suggestions are on the Family tab.").font(.footnote).foregroundStyle(GH.inkSoft)
+            Text("This time passed or became stale. Fresh suggestions are on the Family tab.").font(.footnote).foregroundStyle(Palette.inkSoft)
         case .declined, .canceled, .completed:
             EmptyView()
         }

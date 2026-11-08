@@ -11,7 +11,7 @@ struct DemoControlsView: View {
             let now = model.effectiveNow(ctx.date)
             List {
                 Section {
-                    Label("Simulation controls. Not part of the product.", systemImage: "flask").foregroundStyle(GH.amber)
+                    Label("Simulation controls. Not part of the product.", systemImage: "flask").foregroundStyle(Palette.amber)
                     if let me = model.viewer {
                         Text("Demo clock: \(TimeKit.describe(now, in: me.timeZone, reference: now, use24Hour: s.settings.use24Hour)) · \(me.city)")
                     }
@@ -44,13 +44,13 @@ struct DemoControlsView: View {
                 Section("Decision log (tool actions and outcomes only)") {
                     ForEach(s.log.suffix(25).reversed()) { e in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(e.kind.rawValue.uppercased()).font(.system(size: 9, weight: .bold)).foregroundStyle(GH.amber)
+                            Text(e.kind.rawValue.uppercased()).font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.amber)
                             Text(e.text).font(.caption)
                         }
                     }
                 }
             }
-            .scrollContentBackground(.hidden).background(GH.sunrise.ignoresSafeArea())
+            .scrollContentBackground(.hidden).background(Palette.sunrise.ignoresSafeArea())
             .navigationTitle("Demo controls")
         }
     }

@@ -10,7 +10,7 @@ struct KairoApp: App {
         WindowGroup {
             RootView()
                 .environment(model)
-                .tint(GH.apricot)
+                .tint(Palette.apricot)
                 .task { await model.reload() }
                 .onOpenURL { model.handle($0) }
                 .onChange(of: scenePhase) { _, phase in

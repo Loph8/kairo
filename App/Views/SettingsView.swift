@@ -51,7 +51,7 @@ struct SettingsView: View {
                 Text("For presenters. Kept separate from the product UI.")
             }
         }
-        .scrollContentBackground(.hidden).background(GH.sunrise.ignoresSafeArea())
+        .scrollContentBackground(.hidden).background(Palette.sunrise.ignoresSafeArea())
         .navigationTitle("Privacy & Settings")
         .onAppear { destination = s.callDestination ?? "" }
         .onDisappear { save() }

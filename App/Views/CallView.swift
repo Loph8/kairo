@@ -19,26 +19,26 @@ struct CallView: View {
             Text(p?.name ?? "Unknown").font(.title.weight(.bold))
             if let url = model.callURL() {
                 Text("Opens FaceTime audio to the destination you configured. Kairo can't see the outcome or length of that call.")
-                    .font(.footnote).foregroundStyle(GH.inkSoft).multilineTextAlignment(.center)
+                    .font(.footnote).foregroundStyle(Palette.inkSoft).multilineTextAlignment(.center)
                 Button {
                     model.leftForFaceTime = true
                     openURL(url)
                 } label: { Label("Open FaceTime audio", systemImage: "phone.fill").frame(maxWidth: 260) }
                     .buttonStyle(.borderedProminent).controlSize(.large)
             } else {
-                Label("Demo call screen · simulation", systemImage: "flask").font(.footnote.weight(.semibold)).foregroundStyle(GH.amber)
+                Label("Demo call screen · simulation", systemImage: "flask").font(.footnote.weight(.semibold)).foregroundStyle(Palette.amber)
                 Text(String(format: "%02d:%02d", seconds / 60, seconds % 60)).font(.system(.largeTitle, design: .rounded)).monospacedDigit()
                 Text("No audio is transmitted and nobody is being called. Configure a FaceTime destination in Settings to call for real.")
-                    .font(.footnote).foregroundStyle(GH.inkSoft).multilineTextAlignment(.center)
+                    .font(.footnote).foregroundStyle(Palette.inkSoft).multilineTextAlignment(.center)
             }
             Spacer()
             Button(role: .destructive) { dismiss() } label: {
                 Label(model.callURL() == nil ? "End demo call" : "Close", systemImage: "phone.down.fill").frame(maxWidth: 260)
             }.buttonStyle(.bordered).controlSize(.large)
         }
-        .padding(24).foregroundStyle(GH.ink)
+        .padding(24).foregroundStyle(Palette.ink)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(GH.sunrise.ignoresSafeArea())
+        .background(Palette.sunrise.ignoresSafeArea())
         .onReceive(timer) { _ in if model.callURL() == nil { seconds += 1 } }
         .presentationDetents([.large])
     }
