@@ -1,11 +1,11 @@
 import ActivityKit
 import WidgetKit
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
-struct GoldenHourLiveActivity: Widget {
+struct KairoLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: GoldenHourActivityAttributes.self) { context in
+        ActivityConfiguration(for: KairoActivityAttributes.self) { context in
             LockScreenActivityView(context: context)
                 .activityBackgroundTint(Color(UIColor(hex: 0xFFE8D2)))
                 .activitySystemActionForegroundColor(GH.ink)
@@ -41,7 +41,7 @@ struct GoldenHourLiveActivity: Widget {
     }
 }
 
-func bookingText(_ s: GoldenHourActivityAttributes.ContentState) -> String {
+func bookingText(_ s: KairoActivityAttributes.ContentState) -> String {
     switch s.booking {
     case .confirmed: return "Booked · \(s.otherLocalTimeLabel)"
     case .rescheduled: return "Rescheduled · \(s.otherLocalTimeLabel)"
@@ -51,7 +51,7 @@ func bookingText(_ s: GoldenHourActivityAttributes.ContentState) -> String {
 
 /// System-rendered timer: keeps counting without the app or widget executing code.
 struct CountdownText: View {
-    let state: GoldenHourActivityAttributes.ContentState
+    let state: KairoActivityAttributes.ContentState
     var font: Font
     var body: some View {
         if state.booking == .canceled {
@@ -66,7 +66,7 @@ struct CountdownText: View {
 }
 
 struct LockScreenActivityView: View {
-    let context: ActivityViewContext<GoldenHourActivityAttributes>
+    let context: ActivityViewContext<KairoActivityAttributes>
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "sun.horizon.fill").font(.title2).foregroundStyle(GH.apricot)

@@ -1,6 +1,6 @@
 import WidgetKit
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 enum EntryStatus { case ok, empty, corrupted, unsupported, unavailable }
 

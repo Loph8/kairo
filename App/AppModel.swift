@@ -1,6 +1,6 @@
 import SwiftUI
 import WidgetKit
-import GoldenHourCore
+import KairoCore
 
 enum AppTab: Hashable { case family, schedule, settings }
 
@@ -108,7 +108,7 @@ final class AppModel {
         await perform { try await repo.submitFeedback(proposalID: id, choice: c) }
     }
 
-    // MARK: deep links (validated in GoldenHourCore.DeepLink)
+    // MARK: deep links (validated in KairoCore.DeepLink)
     func handle(_ url: URL) {
         guard let link = DeepLink(url: url) else { banner = "That link isn't valid."; return }
         switch link {

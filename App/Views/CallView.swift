@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 /// Call flow. If the user configured a FaceTime audio destination we hand off to FaceTime; otherwise this
 /// is a clearly labeled in-app SIMULATION. No audio or real call happens here.
@@ -18,7 +18,7 @@ struct CallView: View {
             Avatar(initials: p?.initials ?? "?", size: 96)
             Text(p?.name ?? "Unknown").font(.title.weight(.bold))
             if let url = model.callURL() {
-                Text("Opens FaceTime audio to the destination you configured. Golden Hour can't see the outcome or length of that call.")
+                Text("Opens FaceTime audio to the destination you configured. Kairo can't see the outcome or length of that call.")
                     .font(.footnote).foregroundStyle(GH.inkSoft).multilineTextAlignment(.center)
                 Button {
                     model.leftForFaceTime = true

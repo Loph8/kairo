@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 /// Sunrise palette. Dynamic colors adapt to light/dark without an asset catalog.
 enum GH {

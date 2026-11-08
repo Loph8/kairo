@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 struct OnboardingView: View {
     @Environment(AppModel.self) private var model
@@ -31,9 +31,9 @@ struct OnboardingView: View {
     var welcome: some View {
         VStack(alignment: .leading, spacing: 14) {
             Image(systemName: "sun.horizon.fill").font(.system(size: 56)).foregroundStyle(GH.apricot)
-            Text("Golden Hour").font(.largeTitle.weight(.bold))
+            Text("Kairo").font(.largeTitle.weight(.bold))
             Text("Find a little time together.").font(.title3)
-            Text("Golden Hour estimates good times from your preferences and activity inside Golden Hour. It uses call and reply timing, never what you say.")
+            Text("Kairo estimates good times from your preferences and activity inside Kairo. It uses call and reply timing, never what you say.")
                 .foregroundStyle(GH.inkSoft)
             Text("We won't ask for contacts, microphone, notifications or Focus access until a feature needs it.")
                 .font(.footnote).foregroundStyle(GH.inkSoft)

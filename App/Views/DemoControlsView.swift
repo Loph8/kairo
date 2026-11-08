@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 /// Presenter tools. Everything here is simulation and is labeled as such.
 struct DemoControlsView: View {

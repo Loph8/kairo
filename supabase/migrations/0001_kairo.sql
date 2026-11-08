@@ -1,4 +1,4 @@
--- Golden Hour: proposed production schema. NOT executed in this environment.
+-- Kairo: proposed production schema. NOT executed in this environment.
 -- Principles: RLS everywhere; clients read what membership allows and mutate only through
 -- SECURITY DEFINER functions that derive the actor from auth.uid(); no service-role key in the app.
 

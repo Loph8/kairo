@@ -1,6 +1,6 @@
 import Foundation
 
-/// goldenhour://schedule | member/<id> | proposal/<id> | call/<id>
+/// kairo://schedule | member/<id> | proposal/<id> | call/<id>
 /// Identifiers are validated before use; anything else is rejected.
 public enum DeepLink: Hashable, Sendable {
     case dashboard, schedule
@@ -12,7 +12,7 @@ public enum DeepLink: Hashable, Sendable {
     }
 
     public init?(url: URL) {
-        guard url.scheme == "goldenhour", let host = url.host else { return nil }
+        guard url.scheme == "kairo", let host = url.host else { return nil }
         let parts = url.pathComponents.filter { $0 != "/" }
         switch (host, parts.count) {
         case ("dashboard", 0): self = .dashboard
@@ -26,11 +26,11 @@ public enum DeepLink: Hashable, Sendable {
 
     public var url: URL {
         switch self {
-        case .dashboard: return URL(string: "goldenhour://dashboard")!
-        case .schedule: return URL(string: "goldenhour://schedule")!
-        case .member(let id): return URL(string: "goldenhour://member/\(id)")!
-        case .proposal(let id): return URL(string: "goldenhour://proposal/\(id)")!
-        case .call(let id): return URL(string: "goldenhour://call/\(id)")!
+        case .dashboard: return URL(string: "kairo://dashboard")!
+        case .schedule: return URL(string: "kairo://schedule")!
+        case .member(let id): return URL(string: "kairo://member/\(id)")!
+        case .proposal(let id): return URL(string: "kairo://proposal/\(id)")!
+        case .call(let id): return URL(string: "kairo://call/\(id)")!
         }
     }
 }

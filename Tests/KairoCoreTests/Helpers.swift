@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import GoldenHourCore
+@testable import KairoCore
 
 enum TestEnv {
     static let ny = TimeZone(identifier: "America/New_York")!

@@ -1,7 +1,7 @@
 import ActivityKit
 import UserNotifications
 import Foundation
-import GoldenHourCore
+import KairoCore
 
 /// Activation policy
 /// - ActivityKit cannot start an activity from the widget extension or the background. It is
@@ -16,7 +16,7 @@ final class LiveActivityManager {
 
     func sync(state: AppState, now: Date, clockOffset: TimeInterval) async -> String? {
         guard let me = state.viewerID.nonEmpty else { return nil }
-        let live = Activity<GoldenHourActivityAttributes>.activities
+        let live = Activity<KairoActivityAttributes>.activities
         let upcoming = state.proposals.filter { $0.status == .confirmed && $0.participants.contains(me) && $0.end > now }
             .sorted { $0.start < $1.start }.first
 
@@ -33,11 +33,11 @@ final class LiveActivityManager {
         let realStart = p.start.addingTimeInterval(-clockOffset)
         let untilStart = p.start.timeIntervalSince(now)
         let fmt24 = state.settings.use24Hour
-        let attrs = GoldenHourActivityAttributes(
+        let attrs = KairoActivityAttributes(
             proposalID: p.id, personID: other.id, personName: other.relationship,
             scheduledLabel: TimeKit.describe(p.start, in: mePerson.timeZone, reference: now, use24Hour: fmt24))
         let content = ActivityContent(
-            state: GoldenHourActivityAttributes.ContentState(
+            state: KairoActivityAttributes.ContentState(
                 callStart: realStart, booking: .confirmed,
                 otherLocalTimeLabel: "\(TimeKit.describe(p.start, in: other.timeZone, reference: now, use24Hour: fmt24)) for \(other.relationship)"),
             staleDate: realStart.addingTimeInterval(15 * 60))
@@ -46,7 +46,7 @@ final class LiveActivityManager {
             await existing.update(content); return nil
         }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            return "Live Activities are turned off for Golden Hour. Enable them in Settings to see the countdown on your Lock Screen."
+            return "Live Activities are turned off for Kairo. Enable them in Settings to see the countdown on your Lock Screen."
         }
         guard untilStart <= Self.activationWindow else {
             return "Booked. The Lock Screen countdown starts within an hour of the call (Live Activities can't last for days). A reminder is scheduled if notifications are on."
@@ -84,7 +84,7 @@ enum NotificationScheduler {
             guard fire > now else { continue }
             let c = UNMutableNotificationContent()
             c.title = "Call coming up"
-            c.body = "Your Golden Hour call starts in 10 minutes."
+            c.body = "Your Kairo call starts in 10 minutes."
             c.userInfo = ["url": DeepLink.proposal(p.id).url.absoluteString]
             let req = UNNotificationRequest(identifier: "call-\(p.id)", content: c,
                 trigger: UNTimeIntervalNotificationTrigger(timeInterval: fire.timeIntervalSince(now), repeats: false))

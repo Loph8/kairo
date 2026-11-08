@@ -1,13 +1,13 @@
 import AppIntents
 import WidgetKit
-import GoldenHourCore
+import KairoCore
 
 enum GHIntentError: Error, CustomLocalizedStringResourceConvertible {
     case storageUnavailable, notSetUp, invalidID
     var localizedStringResource: LocalizedStringResource {
         switch self {
-        case .storageUnavailable: return "Golden Hour can't reach its shared data. Open the app."
-        case .notSetUp: return "Open Golden Hour to finish setup."
+        case .storageUnavailable: return "Kairo can't reach its shared data. Open the app."
+        case .notSetUp: return "Open Kairo to finish setup."
         case .invalidID: return "That proposal isn't valid."
         }
     }

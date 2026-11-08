@@ -1,6 +1,6 @@
 import WidgetKit
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 /// Synthetic preview data derived from the real seed, so previews match the app's demo.
 enum PreviewData {
@@ -37,27 +37,27 @@ enum PreviewData {
     }
 }
 
-#Preview("Medium · suggested", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.suggested) }
-#Preview("Medium · waiting for Mom", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.waiting) }
-#Preview("Medium · confirmed", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.confirmed) }
-#Preview("Medium · busy", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.busy) }
-#Preview("Medium · unknown", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.unknown) }
-#Preview("Medium · long names", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.longNames) }
-#Preview("Medium · stale", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.stale) }
-#Preview("Medium · empty", as: .systemMedium) { GoldenHourWidget() } timeline: { PreviewData.entry(.empty) }
-#Preview("Small", as: .systemSmall) { GoldenHourWidget() } timeline: { PreviewData.entry(.suggested) }
-#Preview("Small · waiting", as: .systemSmall) { GoldenHourWidget() } timeline: { PreviewData.entry(.waiting) }
-#Preview("Large", as: .systemLarge) { GoldenHourWidget() } timeline: { PreviewData.entry(.confirmed) }
-#Preview("Lock · rectangular", as: .accessoryRectangular) { GoldenHourWidget() } timeline: { PreviewData.entry(.confirmed) }
-#Preview("Lock · circular", as: .accessoryCircular) { GoldenHourWidget() } timeline: { PreviewData.entry(.confirmed) }
-#Preview("Lock · inline", as: .accessoryInline) { GoldenHourWidget() } timeline: { PreviewData.entry(.suggested) }
+#Preview("Medium · suggested", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.suggested) }
+#Preview("Medium · waiting for Mom", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.waiting) }
+#Preview("Medium · confirmed", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.confirmed) }
+#Preview("Medium · busy", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.busy) }
+#Preview("Medium · unknown", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.unknown) }
+#Preview("Medium · long names", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.longNames) }
+#Preview("Medium · stale", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.stale) }
+#Preview("Medium · empty", as: .systemMedium) { KairoWidget() } timeline: { PreviewData.entry(.empty) }
+#Preview("Small", as: .systemSmall) { KairoWidget() } timeline: { PreviewData.entry(.suggested) }
+#Preview("Small · waiting", as: .systemSmall) { KairoWidget() } timeline: { PreviewData.entry(.waiting) }
+#Preview("Large", as: .systemLarge) { KairoWidget() } timeline: { PreviewData.entry(.confirmed) }
+#Preview("Lock · rectangular", as: .accessoryRectangular) { KairoWidget() } timeline: { PreviewData.entry(.confirmed) }
+#Preview("Lock · circular", as: .accessoryCircular) { KairoWidget() } timeline: { PreviewData.entry(.confirmed) }
+#Preview("Lock · inline", as: .accessoryInline) { KairoWidget() } timeline: { PreviewData.entry(.suggested) }
 
 // Dark mode: toggle the appearance in Xcode's preview canvas; colors in Shared/Theme.swift are dynamic.
 
 #Preview("Live Activity", as: .content,
-         using: GoldenHourActivityAttributes(proposalID: "p-preview-0", personID: "mom", personName: "Mom", scheduledLabel: "Today, 8:30 PM")) {
-    GoldenHourLiveActivity()
+         using: KairoActivityAttributes(proposalID: "p-preview-0", personID: "mom", personName: "Mom", scheduledLabel: "Today, 8:30 PM")) {
+    KairoLiveActivity()
 } contentStates: {
-    GoldenHourActivityAttributes.ContentState(callStart: .now.addingTimeInterval(1800), booking: .confirmed, otherLocalTimeLabel: "Tomorrow, 10:30 AM for Mom")
-    GoldenHourActivityAttributes.ContentState(callStart: .now.addingTimeInterval(1800), booking: .canceled, otherLocalTimeLabel: "")
+    KairoActivityAttributes.ContentState(callStart: .now.addingTimeInterval(1800), booking: .confirmed, otherLocalTimeLabel: "Tomorrow, 10:30 AM for Mom")
+    KairoActivityAttributes.ContentState(callStart: .now.addingTimeInterval(1800), booking: .canceled, otherLocalTimeLabel: "")
 }

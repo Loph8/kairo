@@ -1,57 +1,57 @@
 # XcodeGen spec. NOT verified in this environment (no Xcode here).
-# Generate with:  brew install xcodegen && xcodegen generate && open GoldenHour.xcodeproj
-name: GoldenHour
+# Generate with:  brew install xcodegen && xcodegen generate && open Kairo.xcodeproj
+name: Kairo
 options:
   bundleIdPrefix: com.example          # change to your own
   deploymentTarget: { iOS: "17.0" }
 packages:
-  GoldenHourCore:
+  KairoCore:
     path: .
 settings:
   base:
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: ""               # set your team
 targets:
-  GoldenHour:
+  Kairo:
     type: application
     platform: iOS
     sources: [App, Shared]
     dependencies:
-      - package: GoldenHourCore
-      - target: GoldenHourWidget
+      - package: KairoCore
+      - target: KairoWidget
     entitlements:
-      path: Config/GoldenHour.entitlements
+      path: Config/Kairo.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.example.goldenhour]   # must equal AppGroup.identifier
+        com.apple.security.application-groups: [group.com.example.kairo]   # must equal AppGroup.identifier
     info:
-      path: Config/GoldenHour-Info.plist
+      path: Config/Kairo-Info.plist
       properties:
-        CFBundleDisplayName: Golden Hour
+        CFBundleDisplayName: Kairo
         NSSupportsLiveActivities: true
         UILaunchScreen: {}
         CFBundleURLTypes:
-          - CFBundleURLName: com.example.goldenhour
-            CFBundleURLSchemes: [goldenhour]
+          - CFBundleURLName: com.example.kairo
+            CFBundleURLSchemes: [kairo]
         # No usage-description keys for contacts, microphone, Focus or Photos: those features are not used.
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.goldenhour
-  GoldenHourWidget:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.kairo
+  KairoWidget:
     type: app-extension
     platform: iOS
     sources: [Widget, Shared]
     dependencies:
-      - package: GoldenHourCore
+      - package: KairoCore
     entitlements:
-      path: Config/GoldenHourWidget.entitlements
+      path: Config/KairoWidget.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.example.goldenhour]
+        com.apple.security.application-groups: [group.com.example.kairo]
     info:
-      path: Config/GoldenHourWidget-Info.plist
+      path: Config/KairoWidget-Info.plist
       properties:
-        CFBundleDisplayName: Golden Hour
+        CFBundleDisplayName: Kairo
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.goldenhour.widget
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.kairo.widget

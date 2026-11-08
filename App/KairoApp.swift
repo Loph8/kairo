@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct GoldenHourApp: App {
+struct KairoApp: App {
     @State private var model = AppModel()
     @Environment(\.scenePhase) private var scenePhase
 

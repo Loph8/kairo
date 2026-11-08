@@ -1,7 +1,7 @@
 import WidgetKit
 import SwiftUI
 import AppIntents
-import GoldenHourCore
+import KairoCore
 
 // MARK: - Helpers
 
@@ -47,7 +47,7 @@ struct WidgetHeader: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: "sun.horizon.fill").foregroundStyle(GH.apricot).widgetAccentable()
-            Text("Golden Hour").font(.caption.weight(.semibold)).foregroundStyle(GH.ink)
+            Text("Kairo").font(.caption.weight(.semibold)).foregroundStyle(GH.ink)
             Spacer(minLength: 4)
             FreshnessLabel(entry: entry).font(.system(size: 9, weight: .medium)).foregroundStyle(GH.inkSoft)
         }
@@ -104,13 +104,13 @@ struct EmptyStateView: View {
         case .empty: return "Find a little time together"
         case .unavailable: return "Shared data unavailable"
         case .corrupted: return "Couldn't read saved data"
-        case .unsupported: return "Update Golden Hour"
+        case .unsupported: return "Update Kairo"
         case .ok: return "No family yet"
         }
     }
     var detail: String {
         switch status {
-        case .empty: return "Open Golden Hour to set up your family."
+        case .empty: return "Open Kairo to set up your family."
         case .unavailable: return "Open the app. Widgets can't reach the App Group."
         case .corrupted: return "Open the app to rebuild the widget."
         case .unsupported: return "This widget needs a newer app version."
@@ -299,8 +299,8 @@ struct AccessoryRectangularView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                Label("Golden Hour", systemImage: "sun.horizon.fill").font(.caption.weight(.semibold)).widgetAccentable()
-                Text(entry.status == .ok ? "No call planned" : "Open Golden Hour").font(.caption2)
+                Label("Kairo", systemImage: "sun.horizon.fill").font(.caption.weight(.semibold)).widgetAccentable()
+                Text(entry.status == .ok ? "No call planned" : "Open Kairo").font(.caption2)
             }
         }
     }
@@ -335,7 +335,7 @@ struct AccessoryInlineView: View {
         if let p = entry.focus, let n = entry.next {
             Label("\(p.relationship) · \(entry.yourTime(n.start))", systemImage: "sun.horizon.fill")
         } else {
-            Label("Golden Hour", systemImage: "sun.horizon.fill")
+            Label("Kairo", systemImage: "sun.horizon.fill")
         }
     }
 }

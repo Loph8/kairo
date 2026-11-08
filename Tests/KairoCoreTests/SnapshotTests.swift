@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import GoldenHourCore
+@testable import KairoCore
 
 @Suite struct SnapshotTests {
     func sample() -> WidgetSnapshot {
@@ -42,12 +42,12 @@ import Foundation
     }
 
     @Test func deepLinkValidation() {
-        expectEq(DeepLink(url: URL(string: "goldenhour://proposal/p-20261109T0012Z-mom+you")!), .proposal("p-20261109T0012Z-mom+you"))
-        expectEq(DeepLink(url: URL(string: "goldenhour://schedule")!), .schedule)
-        expectNil(DeepLink(url: URL(string: "goldenhour://member/../etc")!))
-        expectNil(DeepLink(url: URL(string: "goldenhour://member/a%20b")!))
+        expectEq(DeepLink(url: URL(string: "kairo://proposal/p-20261109T0012Z-mom+you")!), .proposal("p-20261109T0012Z-mom+you"))
+        expectEq(DeepLink(url: URL(string: "kairo://schedule")!), .schedule)
+        expectNil(DeepLink(url: URL(string: "kairo://member/../etc")!))
+        expectNil(DeepLink(url: URL(string: "kairo://member/a%20b")!))
         expectNil(DeepLink(url: URL(string: "https://evil.example/member/mom")!))
-        expectNil(DeepLink(url: URL(string: "goldenhour://call/\(String(repeating: "a", count: 200))")!))
+        expectNil(DeepLink(url: URL(string: "kairo://call/\(String(repeating: "a", count: 200))")!))
     }
 }
 

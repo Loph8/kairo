@@ -2,7 +2,7 @@ import ActivityKit
 import Foundation
 
 /// Live Activity model. Compiled into BOTH the app (starts/updates) and the widget extension (renders).
-struct GoldenHourActivityAttributes: ActivityAttributes {
+struct KairoActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         enum Booking: String, Codable { case confirmed, rescheduled, canceled }
         var callStart: Date          // REAL clock instant (demo offset already removed)

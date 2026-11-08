@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 struct MemberDetailView: View {
     @Environment(AppModel.self) private var model

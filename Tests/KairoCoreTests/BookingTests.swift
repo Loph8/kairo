@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import GoldenHourCore
+@testable import KairoCore
 
 @Suite struct BookingTests {
     let now = DemoSeed.anchor

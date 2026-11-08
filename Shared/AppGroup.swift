@@ -1,10 +1,10 @@
 import Foundation
-import GoldenHourCore
+import KairoCore
 
 /// Shared-container access. The identifier MUST match the App Group capability on BOTH the app and
 /// widget targets (see Config/*.entitlements). Replace the placeholder with your own team's group id.
 enum AppGroup {
-    static let identifier = "group.com.example.goldenhour"
+    static let identifier = "group.com.example.kairo"
 
     /// nil when the App Group container is unreachable (misconfigured entitlement, etc.).
     static func container() -> URL? {
@@ -24,7 +24,7 @@ enum AppGroup {
     static func appRepository() -> (repo: LocalDemoRepository, usingAppGroup: Bool) {
         if let c = container() { return (LocalDemoRepository(directory: c), true) }
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("GoldenHour", isDirectory: true)
+            .appendingPathComponent("Kairo", isDirectory: true)
         return (LocalDemoRepository(directory: dir), false)
     }
 }

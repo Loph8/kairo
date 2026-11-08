@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 struct DashboardView: View {
     @Environment(AppModel.self) private var model
@@ -24,7 +24,7 @@ struct DashboardView: View {
                 .padding(16)
             }
             .background(GH.sunrise.ignoresSafeArea())
-            .navigationTitle("Golden Hour")
+            .navigationTitle("Kairo")
             .navigationDestination(for: DeepLink.self) { link in
                 if case .member(let id) = link, let p = model.state.person(id) { MemberDetailView(person: p) }
             }

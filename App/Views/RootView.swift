@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 
 struct RootView: View {
     @Environment(AppModel.self) private var model
@@ -33,7 +33,7 @@ struct RootView: View {
             Button("No") { Task { await model.submitFeedback(.no) } }
             Button("Skip", role: .cancel) { Task { await model.submitFeedback(.skip) } }
         } message: {
-            Text("This is your own answer. Golden Hour can't see whether a call connected, and uses it only as a weak signal.")
+            Text("This is your own answer. Kairo can't see whether a call connected, and uses it only as a weak signal.")
         }
     }
 }

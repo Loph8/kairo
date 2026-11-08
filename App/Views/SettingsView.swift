@@ -1,5 +1,5 @@
 import SwiftUI
-import GoldenHourCore
+import KairoCore
 import UserNotifications
 
 struct SettingsView: View {
@@ -11,7 +11,7 @@ struct SettingsView: View {
     var body: some View {
         let s = model.state.settings
         Form {
-            Section("What Golden Hour collects") {
+            Section("What Kairo collects") {
                 Text("On this device: call outcomes (answered, missed, declined), call length, reply timing, first/last activity, and your Busy and Book taps. Metadata only.")
                 Text("Never collected for availability: message text, audio, contacts, Phone or Messages history.")
             }
@@ -35,7 +35,7 @@ struct SettingsView: View {
                 TextField("FaceTime audio phone or email (optional)", text: $destination)
                     .textInputAutocapitalization(.never).keyboardType(.emailAddress)
                     .onSubmit { save() }
-                Text("Only used if you enter it. Without one, Call opens an in-app demo call screen. Golden Hour can't see whether a FaceTime call connected.")
+                Text("Only used if you enter it. Without one, Call opens an in-app demo call screen. Kairo can't see whether a FaceTime call connected.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Notifications") {

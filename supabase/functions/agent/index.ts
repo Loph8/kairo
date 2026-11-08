@@ -1,4 +1,4 @@
-// Golden Hour agent (Supabase Edge Function, Deno). UNVERIFIED in this environment: not deployed or run.
+// Kairo agent (Supabase Edge Function, Deno). UNVERIFIED in this environment: not deployed or run.
 //
 // Security model
 //  • Every request carries the END USER's JWT. All database access uses that JWT, so RLS and the
