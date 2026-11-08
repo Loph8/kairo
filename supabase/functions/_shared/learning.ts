@@ -29,7 +29,7 @@ export type Outcome =
 export interface Observation {
   readonly at: Date;
   readonly outcome: Outcome;
-  readonly source: 'channel' | 'family_call' | 'widget';
+  readonly source: 'channel' | 'family_call' | 'widget' | 'calendar' | 'shortcut' | 'sim';
 }
 
 export interface Learner {
@@ -45,6 +45,12 @@ export interface Posterior { readonly a: number; readonly b: number; readonly me
 
 function inRange(m: number, from: number, to: number): boolean {
   return from <= to ? m >= from && m < to : m >= from || m < to; // ranges may wrap midnight
+}
+
+/** True while the person said they sleep (outside wake→bed, local time). A hard rule: no amount of learning makes it a good time. */
+export function asleepAt(onb: Onboarding, tz: string, at: Date): boolean {
+  const p = localParts(tz, at);
+  return !inRange(p.hour * 60 + p.minute, toMinutes(onb.wake), toMinutes(onb.bed) % 1440);
 }
 
 /** Turn the 30-second onboarding answers into a G/Y/R grid for weekdays and weekends. */

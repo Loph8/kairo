@@ -1,0 +1,30 @@
+graph LR
+  Onb["Onboarding<br/>wake, bed, busy hours"]
+  Call["Call outcome<br/>picked up / missed<br/>weight 1"]
+  Tap["Widget taps<br/>Book = free, Busy<br/>weight 2"]
+  Cal["Calendar<br/>meeting times only"]
+
+  Prior["1. Prior<br/>green 75%, yellow 50%, red 12.5%<br/>worth 2 calls"]
+  Learn["2. Bayesian learner<br/>Beta(a, b) per person<br/>per half-hour, weekday + weekend<br/>old evidence halves every 28 days"]
+  Odds["3. Pick-up odds<br/>p = a / (a + b)<br/>green 65%+, red under 35%"]
+  Block["4. Calendar override<br/>in a meeting = won't pick up"]
+  Sched["5. Scheduler<br/>tries every 30-min start, next 24 h<br/>score = sum of log p, minus fairness<br/>skips if anyone under 20%"]
+  Best["6. Best time to call<br/>app + widget + Live Activity"]
+  Claude["7. Claude Haiku<br/>one sentence why<br/>template if slow or no key"]
+  Ledger["Fairness ledger<br/>minutes each person spent<br/>on awkward hours"]
+
+  Onb --> Prior
+  Prior --> Learn
+  Call -->|1 or 0| Learn
+  Tap -->|1 or 0, counts double| Learn
+  Cal -->|past meetings = busy| Learn
+  Learn --> Odds
+  Odds --> Block
+  Cal -->|upcoming meetings| Block
+  Block --> Sched
+  Ledger -->|who already took a bad hour| Sched
+  Sched --> Best
+  Sched -->|names, local times, pick-up %| Claude
+  Claude --> Best
+  Best -->|both tap Book| Ledger
+  Best -.->|the call happens, outcome feeds back| Call

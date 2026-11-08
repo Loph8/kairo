@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Hour widget</title>
+<style>
+  :root {
+    --terracotta: #E0785A; --cream: #F4EAD0; --ink: #233C7A;
+    --ochre: #D9A441; --blush: #EF8A73; --bark: #5B2A1E; --speckle: #FFF8EC;
+  }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #2a2320;
+         font-family: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; }
+  /* Widget corner 30, card inset 14 → card radius 16 (outer = inner + padding). */
+  .widget { width: 338px; height: 354px; border-radius: 30px; background: var(--terracotta);
+            position: relative; overflow: hidden; box-shadow: 0 20px 50px #0006; }
+  .title { position: absolute; top: 14px; left: 18px; color: var(--cream); font-weight: 800; font-size: 20px; }
+  .demo { position: absolute; top: 19px; right: 18px; color: var(--bark); font-size: 11px; font-weight: 700; }
+  svg { position: absolute; top: 34px; left: 29px; }
+  .card { position: absolute; left: 14px; right: 14px; bottom: 14px; background: var(--cream);
+          border-radius: 16px; padding: 8px 12px; color: var(--ink); }
+  .next { font-weight: 800; font-size: 15px; }
+  .key { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--bark); margin-top: 3px;
+         font-variant-numeric: tabular-nums; }
+  .key i { width: 14px; height: 8px; border-radius: 2px; background: var(--ochre); }
+</style>
+</head>
+<body>
+<div class="widget">
+  <div class="title">Golden Hour</div>
+  <div class="demo">Demo data</div>
+  <svg id="clock" width="280" height="250" viewBox="-140 -125 280 250"></svg>
+  <div class="card">
+    <div class="next">All 4 free 7:00–8:30</div>
+    <div class="key" id="key"></div>
+  </div>
+</div>
+<script>
+// Free hours in the viewer's local time (Durham), from the demo family's onboarding.
+const MEMBERS = [
+  { name: 'You',     free: [[7, 9.5], [17, 24]] },
+  { name: 'Mom',     free: [[5, 9.5], [17, 20.5]] },
+  { name: 'Grandpa', free: [[0, 8.5], [14.5, 21]] },
+  { name: 'Dad',     free: [[6.5, 15], [22, 24]] },
+];
+const SEGMENT_HOURS = 0.5;          // one 30-minute cell, same as the model
+const RING_R = 86, RING_W = 26;     // wide enough to hold the hour numbers
+const OPACITY = [0.1, 0.3, 0.5, 0.75, 1]; // index = how many people are free
+const NOW_HOUR = 20.2;
+
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('clock');
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const el = (tag, attrs, parent = svg) => { const e = document.createElementNS(NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); parent.appendChild(e); return e; };
+const pt = (h, r) => { const a = (h / 24) * 2 * Math.PI - Math.PI / 2; return [r * Math.cos(a), r * Math.sin(a)]; };
+const arc = (h0, h1, r) => { const [x0, y0] = pt(h0, r), [x1, y1] = pt(h1 - 0.001, r);
+  return `M${x0} ${y0} A${r} ${r} 0 ${h1 - h0 > 12 ? 1 : 0} 1 ${x1} ${y1}`; };
+
+const freeCount = (h) => MEMBERS.filter((m) => m.free.some(([a, b]) => h >= a && h < b)).length;
+
+// Merge neighbouring cells with the same count into one arc, so there are no seams.
+const runs = [];
+for (let h = 0; h < 24; h += SEGMENT_HOURS) {
+  const n = freeCount(h + SEGMENT_HOURS / 2), last = runs[runs.length - 1];
+  if (last && last.n === n) last.to = h + SEGMENT_HOURS; else runs.push({ from: h, to: h + SEGMENT_HOURS, n });
+}
+
+el('defs', {}).innerHTML =
+  '<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>';
+
+// Leaf wreath + speckles (decoration only)
+for (let i = 0; i < 36; i++) {
+  const h = (i / 36) * 24, [x, y] = pt(h, 112), rot = (h / 24) * 360 + (i % 2 ? 40 : -40);
+  el('ellipse', { cx: x, cy: y, rx: 3.2, ry: 8, fill: css('--bark'), transform: `rotate(${rot} ${x} ${y})` });
+}
+for (let i = 0; i < 14; i++) { const [x, y] = pt(i * 1.7 + 0.4, 122 - (i % 3) * 4);
+  el('circle', { cx: x, cy: y, r: 1.4, fill: css('--speckle') }); }
+
+el('circle', { cx: 0, cy: 0, r: 100, fill: css('--cream') });
+
+// Glow only where everyone is free
+runs.filter((r) => r.n === MEMBERS.length).forEach((r) =>
+  el('path', { d: arc(r.from, r.to, RING_R), stroke: css('--ochre'), 'stroke-width': RING_W + 14,
+               fill: 'none', opacity: 0.6, filter: 'url(#glow)' }));
+
+// The one ring: ochre, brighter the more people are free
+runs.forEach((r) =>
+  el('path', { d: arc(r.from, r.to, RING_R), stroke: css('--ochre'), 'stroke-width': RING_W,
+               fill: 'none', opacity: OPACITY[r.n] }));
+
+// 24-hour numbers sit on the ring itself; quarter hours (0, 6, 12, 18) are larger and bolder.
+for (let h = 0; h < 24; h++) {
+  const major = h % 6 === 0, [x, y] = pt(h, RING_R);
+  el('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': major ? 12 : 9,
+               'font-weight': major ? 800 : 600, fill: css('--bark'), opacity: major ? 1 : 0.7 })
+    .textContent = h;
+}
+
+// Now hand + dot
+const [hx, hy] = pt(NOW_HOUR, RING_R - RING_W / 2 - 7); // stop inside the ring so the numbers stay clear
+el('line', { x1: 0, y1: 0, x2: hx, y2: hy, stroke: css('--ink'), 'stroke-width': 2, 'stroke-linecap': 'round' });
+el('circle', { cx: hx, cy: hy, r: 5, fill: css('--blush'), stroke: css('--cream'), 'stroke-width': 2 });
+el('circle', { cx: 0, cy: 0, r: 3, fill: css('--ink') });
+
+// Key: opacity is never the only cue — the count is spelled out.
+document.getElementById('key').innerHTML = [1, 2, 3, 4]
+  .map((n) => `<i style="opacity:${OPACITY[n]}"></i>${n}`).join(' ') + '&nbsp;free';
+</script>
+<!-- Agentation toolbar (design review only; delete before shipping). Sends notes to the local MCP server. -->
+<div id="agentation-root"></div>
+<script type="module">
+import React from 'https://esm.sh/react@18.3.1';
+import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+import { Agentation } from 'https://esm.sh/agentation@3.1.2?deps=react@18.3.1,react-dom@18.3.1';
+createRoot(document.getElementById('agentation-root'))
+  .render(React.createElement(Agentation, { endpoint: 'http://localhost:4747' }));
+</script>
+</body>
+</html>

@@ -3,3 +3,5 @@ node_modules/
 .env.*
 *.xcuserstate
 DerivedData/
+.DS_Store
+.shots/

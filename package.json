@@ -6,5 +6,13 @@
     "test": "bun test supabase/functions/_shared",
     "sim": "bun run sim/learning_sim.ts",
     "story": "bun run sim/story.ts"
+  },
+  "devDependencies": {
+    "deno": "2.9.6",
+    "supabase": "3.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.6.0",
+    "@supabase/supabase-js": "2.119.0"
   }
 }

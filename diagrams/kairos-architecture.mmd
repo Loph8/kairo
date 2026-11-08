@@ -1,0 +1,33 @@
+graph LR
+  subgraph Phone["Each family member's iPhone"]
+    App["Kairos app<br/>SwiftUI"]
+    Widget["Widgets<br/>In Sync clock + Lock Screen"]
+    Live["Live Activity<br/>countdown to the call"]
+    Calls["Call apps<br/>FaceTime, Phone, WhatsApp, KakaoTalk..."]
+    Detect["Call detection<br/>CXCallObserver"]
+    Cal["Calendar<br/>EventKit"]
+  end
+
+  subgraph Cloud["Supabase"]
+    API["Edge Function<br/>api"]
+    DB[("Postgres<br/>observations, busy blocks, bookings")]
+    Learn["Learning<br/>pick-up odds per 30 min"]
+    Sched["Scheduler<br/>best overlap across time zones"]
+  end
+
+  Claude["Claude Haiku<br/>explains the pick"]
+
+  App -->|tap Call| Calls
+  Calls -.->|connected or missed| Detect
+  Detect -->|outcome only| App
+  Cal -->|busy times only| App
+  Widget -->|Book / Busy taps| API
+  App -->|timestamps + outcomes, never content| API
+  API --> DB
+  DB --> Learn
+  Learn -->|green / yellow / red slots| Sched
+  Sched -->|one plain sentence| Claude
+  Sched -->|best time to call| API
+  API -->|family state| App
+  App -->|shared app group| Widget
+  App -->|booked call| Live
