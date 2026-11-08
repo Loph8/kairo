@@ -104,6 +104,36 @@ extension GoldenEntry {
     }
 }
 
+// MARK: Look (night sky normally, golden sky while in sync)
+
+struct SyncLook {
+    var ring: Color, ringOpacity: Double
+    var optimal: Color, optimalGlow: Color
+    var available: Color
+    var detail: Color            // ticks, numerals, hand
+    var text: Color, textSoft: Color
+
+    private static func c(_ hex: UInt32) -> Color { Color(uiColor: UIColor(hex: hex)) }
+    static let indigo = c(0x2A1F6B)
+    static let cream = c(0xFFFBEA)
+
+    static let night = SyncLook(ring: Night.ring, ringOpacity: 0.6,
+                                optimal: Night.gold, optimalGlow: Night.gold,
+                                available: Night.yellow, detail: Night.lavender,
+                                text: Night.text, textSoft: Night.lavender)
+    /// Yellow background: the ring and text flip to deep indigo so they still read; the
+    /// optimal arcs turn glowing cream-white and "available" arcs a deeper amber.
+    static let golden = SyncLook(ring: indigo, ringOpacity: 0.3,
+                                 optimal: cream, optimalGlow: .white,
+                                 available: c(0xD98A0B), detail: indigo,
+                                 text: indigo, textSoft: indigo)
+
+    static func of(_ phase: SyncPhase) -> SyncLook { phase.isInSync ? golden : night }
+}
+
+/// All text is secondary to the clock: small and at 75% opacity.
+private let textOpacity = 0.75
+
 // MARK: Clock face
 
 struct SyncClockFace: View {
@@ -111,10 +141,11 @@ struct SyncClockFace: View {
     let now: Date
     let timeZone: TimeZone
     let inSync: Bool
-    /// Thickness of the purple ring; the yellow arcs use exactly the same width.
+    /// Thickness of the ring; the yellow arcs use exactly the same width.
     let ring: CGFloat
     var numberSize: CGFloat = 10
 
+    private var look: SyncLook { inSync ? .golden : .night }
     private struct Arc: Hashable { var from: Double; var to: Double; var optimal: Bool }
 
     /// 0…1 around the dial, 0 = 12 o'clock.
@@ -142,38 +173,37 @@ struct SyncClockFace: View {
             let d = side - ring - 4             // ring path diameter (stroke + a little glow room)
             let r = d / 2
             let tickLength = ring * 0.9
-            let numberRadius = r - ring * 1.6 - numberSize * 0.35
+            let numberRadius = r - ring * 1.5 - numberSize * 0.4
             let handLength = r * 0.55
 
             ZStack {
-                // Purple ring
                 Circle()
-                    .stroke(Night.ring.opacity(inSync ? 0.85 : 0.6), lineWidth: ring)
+                    .stroke(look.ring.opacity(look.ringOpacity), lineWidth: ring)
                     .frame(width: d, height: d)
 
                 // Available windows: just yellow
                 ForEach(arcs.filter { !$0.optimal }, id: \.self) { a in
                     Circle().trim(from: a.from, to: a.to)
-                        .stroke(Night.yellow.opacity(0.9), style: StrokeStyle(lineWidth: ring, lineCap: .round))
+                        .stroke(look.available, style: StrokeStyle(lineWidth: ring, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .frame(width: d, height: d)
                 }
-                // Optimal windows: glowing gold (glows harder while in sync)
+                // Optimal windows: glowing (glows harder while in sync)
                 ForEach(arcs.filter(\.optimal), id: \.self) { a in
                     Circle().trim(from: a.from, to: a.to)
-                        .stroke(inSync ? Night.goldBright : Night.gold, style: StrokeStyle(lineWidth: ring, lineCap: .round))
+                        .stroke(look.optimal, style: StrokeStyle(lineWidth: ring, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .frame(width: d, height: d)
-                        .shadow(color: Night.gold.opacity(0.95), radius: inSync ? ring * 0.9 : ring * 0.5)
-                        .shadow(color: Night.gold.opacity(inSync ? 0.8 : 0.45), radius: inSync ? ring * 2.4 : ring * 1.3)
+                        .shadow(color: look.optimalGlow.opacity(0.95), radius: inSync ? ring * 0.9 : ring * 0.5)
+                        .shadow(color: look.optimalGlow.opacity(inSync ? 0.85 : 0.45), radius: inSync ? ring * 2.2 : ring * 1.3)
                 }
 
                 // Hour ticks (skipped where the 12 / 3 / 6 / 9 numerals sit)
                 ForEach(0..<12, id: \.self) { h in
                     if h % 3 != 0 {
                         Capsule()
-                            .fill(Night.lavender.opacity(0.55))
-                            .frame(width: max(1.2, ring * 0.22), height: tickLength * 0.6)
+                            .fill(look.detail.opacity(0.5))
+                            .frame(width: max(1.2, ring * 0.2), height: tickLength * 0.6)
                             .offset(y: -(r - ring - tickLength * 0.5))
                             .rotationEffect(.degrees(Double(h) * 30))
                     }
@@ -184,20 +214,19 @@ struct SyncClockFace: View {
                     let angle = Double(n % 12) / 12 * 2 * .pi
                     Text("\(n)")
                         .font(Night.font(numberSize, .regular))
-                        .foregroundStyle(Night.lavender)
+                        .foregroundStyle(look.detail.opacity(0.8))
                         .offset(x: sin(angle) * numberRadius, y: -cos(angle) * numberRadius)
                 }
 
                 // Hour hand pointing at "now"
                 Capsule()
-                    .fill(inSync ? Night.goldBright : Night.lavender)
-                    .frame(width: max(2, ring * 0.38), height: handLength)
+                    .fill(look.detail)
+                    .frame(width: max(2, ring * 0.32), height: handLength)
                     .offset(y: -handLength / 2)
                     .rotationEffect(.degrees(fraction(now) * 360))
-                    .shadow(color: inSync ? Night.gold.opacity(0.8) : .clear, radius: 3)
                 Circle()
-                    .fill(inSync ? Night.goldBright : Night.lavender)
-                    .frame(width: ring * 1.1, height: ring * 1.1)
+                    .fill(look.detail)
+                    .frame(width: ring * 0.9, height: ring * 0.9)
             }
             .frame(width: side, height: side)
             .position(x: geo.size.width / 2, y: geo.size.height / 2)
@@ -215,13 +244,12 @@ struct SyncCallButton: View {
     var body: some View {
         Link(destination: DeepLink.call(person.id).url) {
             Text("Call")
-            .font(Night.font(compact ? 10 : 14, .bold))
-            .foregroundStyle(Night.skyTop)
-            .padding(.horizontal, compact ? 7 : 12)
-            .padding(.vertical, compact ? 3 : 6)
-            .background(Capsule().fill(LinearGradient(colors: [Night.goldBright, Night.gold],
-                                                      startPoint: .top, endPoint: .bottom)))
-            .shadow(color: Night.gold.opacity(0.9), radius: compact ? 4 : 7)
+                .font(Night.font(compact ? 9 : 12, .bold))
+                .foregroundStyle(SyncLook.cream)
+                .padding(.horizontal, compact ? 7 : 11)
+                .padding(.vertical, compact ? 2.5 : 4)
+                .background(Capsule().fill(SyncLook.indigo))
+                .shadow(color: SyncLook.indigo.opacity(0.35), radius: 3, y: 1)
         }
         .accessibilityLabel("Call \(person.relationship)")
     }
@@ -233,19 +261,20 @@ struct SyncHeader: View {
     let phase: SyncPhase
     var compact = false
     var body: some View {
+        let look = SyncLook.of(phase)
         HStack(alignment: .center, spacing: 6) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(person.relationship)
-                    .font(Night.font(compact ? 14 : 20, .semibold))
-                    .foregroundStyle(phase.isInSync ? Night.goldBright : Night.text)
-                    .shadow(color: phase.isInSync ? Night.gold.opacity(0.7) : .clear, radius: 4)
+                    .font(Night.font(compact ? 11 : 15, .semibold))
+                    .foregroundStyle(look.text)
                     .lineLimit(1).minimumScaleFactor(0.6)
                 Text("\(entry.time(person)) · \(person.city)")
-                    .font(Night.font(compact ? 9 : 12, .medium))
+                    .font(Night.font(compact ? 8 : 10, .medium))
                     .monospacedDigit()
-                    .foregroundStyle(Night.lavender)
+                    .foregroundStyle(look.textSoft)
                     .lineLimit(1).minimumScaleFactor(0.7)
             }
+            .opacity(textOpacity)
             Spacer(minLength: 2)
             if phase.isInSync { SyncCallButton(person: person, compact: compact) }
         }
@@ -258,16 +287,15 @@ struct SyncStatusText: View {
     var compact = false
     var alignment: HorizontalAlignment = .center
 
-    private var titleSize: CGFloat { compact ? 13 : 20 }
-    private var subSize: CGFloat { compact ? 10 : 14 }
+    private var look: SyncLook { .of(phase) }
+    private var titleSize: CGFloat { compact ? 10 : 14 }
+    private var subSize: CGFloat { compact ? 8 : 11 }
 
     var body: some View {
-        VStack(alignment: alignment, spacing: 1) {
+        VStack(alignment: alignment, spacing: 0) {
             switch phase {
             case .inSync:
-                title("You're in sync!", color: Night.goldBright)
-                    .shadow(color: Night.gold.opacity(0.95), radius: 4)
-                    .shadow(color: Night.gold.opacity(0.7), radius: 10)
+                title("You're in sync!")
                 sub(Text("Good time to call"))
             case .available(let until, let nextOptimal):
                 title("Free-ish right now", color: Night.yellow)
@@ -277,69 +305,79 @@ struct SyncStatusText: View {
                     sub(Text("Until \(TimeKit.formatTime(until, entry.snapshot?.viewerTimeZone ?? .current, use24Hour: entry.snapshot?.use24Hour ?? false))"))
                 }
             case .almost(let d):
-                title("Almost in sync", color: Night.text)
+                title("Almost in sync")
                 sub(Text("Next window in ") + Text(entry.realTarget(d), style: .relative))
             case .waiting(let d):
-                Text("Next sync in")
-                    .font(Night.font(subSize, .medium))
-                    .foregroundStyle(Night.lavender)
+                sub(Text("Next sync in"))
                 Text(entry.realTarget(d), style: .relative)
-                    .font(Night.font(compact ? 16 : 28, .semibold))
+                    .font(Night.font(compact ? 11 : 16, .semibold))
                     .monospacedDigit()
-                    .foregroundStyle(Night.text)
+                    .foregroundStyle(look.text)
             case .none:
-                title("Not quite yet", color: Night.text)
+                title("Not quite yet")
                 sub(Text("No sync in the next 12h"))
             case .unknown:
-                title("Still learning", color: Night.text)
+                title("Still learning")
                 sub(Text("Open Golden Hour to refresh"))
             }
         }
         .multilineTextAlignment(alignment == .center ? .center : .leading)
         .lineLimit(1).minimumScaleFactor(0.6)
+        .opacity(textOpacity)
     }
 
-    private func title(_ s: String, color: Color) -> some View {
-        Text(s).font(Night.font(titleSize, .semibold)).foregroundStyle(color)
+    private func title(_ s: String, color: Color? = nil) -> some View {
+        Text(s).font(Night.font(titleSize, .semibold)).foregroundStyle(color ?? look.text)
     }
     private func sub(_ t: Text) -> some View {
-        t.font(Night.font(subSize, .medium)).foregroundStyle(Night.lavender)
+        t.font(Night.font(subSize, .medium)).foregroundStyle(look.textSoft)
     }
 }
 
-/// Starry background. In sync → the whole widget glows gold; available now → a softer warm tint.
+/// Night sky normally. In sync → the whole background turns glowing yellow-gold.
 struct NightSkyBackground: View {
     let phase: SyncPhase
     private static let stars: [(CGFloat, CGFloat, CGFloat)] = [
         (0.08, 0.12, 1.4), (0.22, 0.30, 0.9), (0.90, 0.22, 1.2), (0.70, 0.08, 0.8),
         (0.12, 0.70, 1.0), (0.94, 0.62, 1.3), (0.55, 0.92, 0.9), (0.35, 0.55, 0.7), (0.80, 0.85, 1.1),
     ]
+    private static func c(_ hex: UInt32) -> Color { Color(uiColor: UIColor(hex: hex)) }
 
     var body: some View {
         GeometryReader { geo in
+            let big = max(geo.size.width, geo.size.height)
             ZStack {
-                LinearGradient(colors: [Night.skyTop, Night.skyBottom], startPoint: .top, endPoint: .bottom)
-                RadialGradient(colors: [Night.violet.opacity(0.45), .clear], center: .bottomLeading,
-                               startRadius: 0, endRadius: max(geo.size.width, geo.size.height) * 0.8)
-                ForEach(0..<Self.stars.count, id: \.self) { i in
-                    let s = Self.stars[i]
-                    Circle().fill(.white.opacity(0.7))
-                        .frame(width: s.2 * 2, height: s.2 * 2)
-                        .position(x: geo.size.width * s.0, y: geo.size.height * s.1)
-                }
                 if phase.isInSync {
-                    RadialGradient(colors: [Night.gold.opacity(0.42), Night.gold.opacity(0.12), .clear], center: .center,
-                                   startRadius: 0, endRadius: max(geo.size.width, geo.size.height) * 0.75)
-                    ContainerRelativeShape().strokeBorder(Night.gold, lineWidth: 10).blur(8)
-                    ContainerRelativeShape().strokeBorder(Night.goldBright.opacity(0.95), lineWidth: 2)
-                } else if phase.isAvailable {
-                    RadialGradient(colors: [Night.yellow.opacity(0.14), .clear], center: .center,
-                                   startRadius: 0, endRadius: max(geo.size.width, geo.size.height) * 0.6)
-                    ContainerRelativeShape().strokeBorder(Night.yellow.opacity(0.45), lineWidth: 1)
+                    LinearGradient(colors: [Self.c(0xFFE680), Self.c(0xFFC93C), Self.c(0xF5A623)],
+                                   startPoint: .top, endPoint: .bottom)
+                    RadialGradient(colors: [Self.c(0xFFFBE0).opacity(0.85), Self.c(0xFFF3B0).opacity(0.3), .clear],
+                                   center: .center, startRadius: 0, endRadius: big * 0.6)
+                    stars(in: geo.size, opacity: 0.85)
+                    ContainerRelativeShape().strokeBorder(.white.opacity(0.9), lineWidth: 10).blur(9)
+                    ContainerRelativeShape().strokeBorder(Self.c(0xFFF6CC), lineWidth: 1.5)
                 } else {
-                    ContainerRelativeShape().strokeBorder(Night.lavender.opacity(0.3), lineWidth: 1)
+                    LinearGradient(colors: [Night.skyTop, Night.skyBottom], startPoint: .top, endPoint: .bottom)
+                    RadialGradient(colors: [Night.violet.opacity(0.45), .clear], center: .bottomLeading,
+                                   startRadius: 0, endRadius: big * 0.8)
+                    stars(in: geo.size, opacity: 0.7)
+                    if phase.isAvailable {
+                        RadialGradient(colors: [Night.yellow.opacity(0.14), .clear], center: .center,
+                                       startRadius: 0, endRadius: big * 0.6)
+                        ContainerRelativeShape().strokeBorder(Night.yellow.opacity(0.45), lineWidth: 1)
+                    } else {
+                        ContainerRelativeShape().strokeBorder(Night.lavender.opacity(0.3), lineWidth: 1)
+                    }
                 }
             }
+        }
+    }
+
+    private func stars(in size: CGSize, opacity: Double) -> some View {
+        ForEach(0..<Self.stars.count, id: \.self) { i in
+            let s = Self.stars[i]
+            Circle().fill(.white.opacity(opacity))
+                .frame(width: s.2 * 2, height: s.2 * 2)
+                .position(x: size.width * s.0, y: size.height * s.1)
         }
     }
 }
@@ -362,8 +400,8 @@ struct SyncClockEntryView: View {
                 VStack(spacing: 6) {
                     Image(systemName: "clock").font(.title2).foregroundStyle(Night.gold)
                     Text("Open Golden Hour to set up your family")
-                        .font(.caption.weight(.semibold)).multilineTextAlignment(.center)
-                        .foregroundStyle(Night.text)
+                        .font(Night.font(12, .semibold)).multilineTextAlignment(.center)
+                        .foregroundStyle(Night.text).opacity(textOpacity)
                 }
                 .widgetURL(DeepLink.dashboard.url)
             }
@@ -371,6 +409,7 @@ struct SyncClockEntryView: View {
         .containerBackground(for: .widget) { NightSkyBackground(phase: phase) }
     }
 
+    /// The clock is the hero: it takes all the space the (small) text doesn't.
     @ViewBuilder
     private func content(_ p: WidgetPerson, _ s: WidgetSnapshot, _ phase: SyncPhase) -> some View {
         let face = { (ring: CGFloat, numbers: CGFloat) in
@@ -379,24 +418,24 @@ struct SyncClockEntryView: View {
         }
         switch family {
         case .systemMedium:
-            HStack(spacing: 14) {
-                face(7, 10)
-                VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 12) {
+                face(10, 11)
+                VStack(alignment: .leading, spacing: 4) {
                     SyncHeader(entry: entry, person: p, phase: phase)
                     Spacer(minLength: 0)
                     SyncStatusText(entry: entry, phase: phase, alignment: .leading)
                 }
             }
         case .systemLarge:
-            VStack(spacing: 10) {
+            VStack(spacing: 6) {
                 SyncHeader(entry: entry, person: p, phase: phase)
-                face(11, 15).padding(.horizontal, 12)
+                face(16, 17).frame(maxHeight: .infinity)
                 SyncStatusText(entry: entry, phase: phase)
             }
         default: // systemSmall
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 SyncHeader(entry: entry, person: p, phase: phase, compact: true)
-                face(5, 8)
+                face(7, 9).frame(maxHeight: .infinity)
                 SyncStatusText(entry: entry, phase: phase, compact: true)
             }
         }
