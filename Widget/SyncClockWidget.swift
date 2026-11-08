@@ -26,14 +26,15 @@ enum Night {
     static let yellow = c(0xF2D06B)
 
     // MARK: Typography
-    // Avenir Next ships with iOS, so nothing to bundle. To use a custom font instead
-    // (e.g. Oasis, Celio, Brillo): add its licensed .otf/.ttf to the Widget target, list it under
-    // UIAppFonts in the widget's Info.plist (project.yml), and change `faces` to its PostScript names.
+    // Sulphur Point (Google Fonts, SIL Open Font License; see Widget/Fonts/OFL.txt).
+    // The .ttf files live in Widget/Fonts and are registered via UIAppFonts in project.yml.
+    // It only comes in Light / Regular / Bold, so medium maps to Regular and semibold to Bold.
     private static let faces: [Font.Weight: String] = [
-        .regular: "AvenirNext-Regular",
-        .medium: "AvenirNext-Medium",
-        .semibold: "AvenirNext-DemiBold",
-        .bold: "AvenirNext-Bold",
+        .light: "SulphurPoint-Light",
+        .regular: "SulphurPoint-Regular",
+        .medium: "SulphurPoint-Regular",
+        .semibold: "SulphurPoint-Bold",
+        .bold: "SulphurPoint-Bold",
     ]
     static func font(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
         .custom(faces[weight] ?? faces[.regular]!, size: size)
@@ -182,7 +183,7 @@ struct SyncClockFace: View {
                 ForEach([12, 3, 6, 9], id: \.self) { n in
                     let angle = Double(n % 12) / 12 * 2 * .pi
                     Text("\(n)")
-                        .font(Night.font(numberSize, .semibold))
+                        .font(Night.font(numberSize, .regular))
                         .foregroundStyle(Night.lavender)
                         .offset(x: sin(angle) * numberRadius, y: -cos(angle) * numberRadius)
                 }

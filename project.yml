@@ -52,6 +52,10 @@ targets:
         CFBundleDisplayName: Golden Hour
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        UIAppFonts:                    # Widget/Fonts, bundled as resources of the widget
+          - SulphurPoint-Light.ttf
+          - SulphurPoint-Regular.ttf
+          - SulphurPoint-Bold.ttf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.goldenhour.widget
