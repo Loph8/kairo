@@ -24,6 +24,20 @@ enum Night {
     static let gold = c(0xFFC93C)
     static let goldBright = c(0xFFE38A)
     static let yellow = c(0xF2D06B)
+
+    // MARK: Typography
+    // Avenir Next ships with iOS, so nothing to bundle. To use a custom font instead
+    // (e.g. Oasis, Celio, Brillo): add its licensed .otf/.ttf to the Widget target, list it under
+    // UIAppFonts in the widget's Info.plist (project.yml), and change `faces` to its PostScript names.
+    private static let faces: [Font.Weight: String] = [
+        .regular: "AvenirNext-Regular",
+        .medium: "AvenirNext-Medium",
+        .semibold: "AvenirNext-DemiBold",
+        .bold: "AvenirNext-Bold",
+    ]
+    static func font(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        .custom(faces[weight] ?? faces[.regular]!, size: size)
+    }
 }
 
 // MARK: Model
@@ -168,7 +182,7 @@ struct SyncClockFace: View {
                 ForEach([12, 3, 6, 9], id: \.self) { n in
                     let angle = Double(n % 12) / 12 * 2 * .pi
                     Text("\(n)")
-                        .font(.system(size: numberSize, weight: .semibold, design: .rounded))
+                        .font(Night.font(numberSize, .semibold))
                         .foregroundStyle(Night.lavender)
                         .offset(x: sin(angle) * numberRadius, y: -cos(angle) * numberRadius)
                 }
@@ -199,11 +213,8 @@ struct SyncCallButton: View {
     var compact = false
     var body: some View {
         Link(destination: DeepLink.call(person.id).url) {
-            HStack(spacing: 3) {
-                Image(systemName: "phone.fill")
-                Text("Call")
-            }
-            .font(.system(size: compact ? 10 : 14, weight: .bold, design: .rounded))
+            Text("Call")
+            .font(Night.font(compact ? 10 : 14, .bold))
             .foregroundStyle(Night.skyTop)
             .padding(.horizontal, compact ? 7 : 12)
             .padding(.vertical, compact ? 3 : 6)
@@ -224,12 +235,12 @@ struct SyncHeader: View {
         HStack(alignment: .center, spacing: 6) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(person.relationship)
-                    .font(.system(size: compact ? 14 : 20, weight: .semibold, design: .rounded))
+                    .font(Night.font(compact ? 14 : 20, .semibold))
                     .foregroundStyle(phase.isInSync ? Night.goldBright : Night.text)
                     .shadow(color: phase.isInSync ? Night.gold.opacity(0.7) : .clear, radius: 4)
                     .lineLimit(1).minimumScaleFactor(0.6)
                 Text("\(entry.time(person)) · \(person.city)")
-                    .font(.system(size: compact ? 9 : 12, weight: .medium, design: .rounded))
+                    .font(Night.font(compact ? 9 : 12, .medium))
                     .monospacedDigit()
                     .foregroundStyle(Night.lavender)
                     .lineLimit(1).minimumScaleFactor(0.7)
@@ -269,10 +280,10 @@ struct SyncStatusText: View {
                 sub(Text("Next window in ") + Text(entry.realTarget(d), style: .relative))
             case .waiting(let d):
                 Text("Next sync in")
-                    .font(.system(size: subSize, weight: .medium, design: .rounded))
+                    .font(Night.font(subSize, .medium))
                     .foregroundStyle(Night.lavender)
                 Text(entry.realTarget(d), style: .relative)
-                    .font(.system(size: compact ? 16 : 28, weight: .semibold, design: .rounded))
+                    .font(Night.font(compact ? 16 : 28, .semibold))
                     .monospacedDigit()
                     .foregroundStyle(Night.text)
             case .none:
@@ -288,10 +299,10 @@ struct SyncStatusText: View {
     }
 
     private func title(_ s: String, color: Color) -> some View {
-        Text(s).font(.system(size: titleSize, weight: .semibold, design: .rounded)).foregroundStyle(color)
+        Text(s).font(Night.font(titleSize, .semibold)).foregroundStyle(color)
     }
     private func sub(_ t: Text) -> some View {
-        t.font(.system(size: subSize, weight: .medium, design: .rounded)).foregroundStyle(Night.lavender)
+        t.font(Night.font(subSize, .medium)).foregroundStyle(Night.lavender)
     }
 }
 
