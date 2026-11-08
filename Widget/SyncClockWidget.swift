@@ -101,15 +101,21 @@ struct SyncLook {
     var glowOpacity: Double
     var title: Color
 
-    static let champagne = Space.c(0xF3D08A)
-    static let night = SyncLook(ringOpacity: 0.13, optimal: champagne, glowOpacity: 0.45, title: .white)
-    static let golden = SyncLook(ringOpacity: 0.18, optimal: Space.c(0xFFE3A8), glowOpacity: 0.75, title: Space.c(0xFFE2A6))
+    static let champagne = Space.summersHeat
+    static let night = SyncLook(ringOpacity: 0.28, optimal: Space.summersHeat, glowOpacity: 0.45, title: Space.whitestWhite)
+    static let golden = SyncLook(ringOpacity: 0.35, optimal: Space.summersHeat, glowOpacity: 0.75, title: Space.summersHeat)
 
     static func of(_ phase: SyncPhase) -> SyncLook { phase.isInSync ? golden : night }
 }
 
+/// Palette: Amethyst, Viking Diva, Summer's Heat, Whitest White, Gettysburg Gray.
 enum Space {
     static func c(_ hex: UInt32) -> Color { Color(uiColor: UIColor(hex: hex)) }
+    static let amethyst = c(0x51416E)
+    static let vikingDiva = c(0xC8BADD)
+    static let summersHeat = c(0xF5E6A3)
+    static let whitestWhite = c(0xF8F9F4)
+    static let gettysburgGray = c(0xC5C1B8)
 }
 
 /// All text is secondary to the clock: small and at 75% opacity.
@@ -159,13 +165,13 @@ struct SyncClockFace: View {
 
             ZStack {
                 Circle()
-                    .stroke(.white.opacity(look.ringOpacity), lineWidth: ring)
+                    .stroke(Space.vikingDiva.opacity(look.ringOpacity), lineWidth: ring)
                     .frame(width: d, height: d)
 
                 // Available (maybe free): soft champagne, no glow
                 ForEach(arcs.filter { !$0.optimal }, id: \.self) { a in
                     Circle().trim(from: a.from, to: a.to)
-                        .stroke(SyncLook.champagne.opacity(0.42), style: StrokeStyle(lineWidth: ring, lineCap: .round))
+                        .stroke(SyncLook.champagne.opacity(0.45), style: StrokeStyle(lineWidth: ring, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .frame(width: d, height: d)
                 }
@@ -182,7 +188,7 @@ struct SyncClockFace: View {
                 ForEach(0..<12, id: \.self) { h in
                     if h % 3 != 0 {
                         Capsule()
-                            .fill(.white.opacity(0.28))
+                            .fill(Space.gettysburgGray.opacity(0.55))
                             .frame(width: max(1, ring * 0.17), height: ring * 0.45)
                             .offset(y: -tickRadius)
                             .rotationEffect(.degrees(Double(h) * 30))
@@ -194,18 +200,18 @@ struct SyncClockFace: View {
                     let angle = Double(n % 12) / 12 * 2 * .pi
                     Text("\(n)")
                         .font(Night.font(numberSize, .regular))
-                        .foregroundStyle(.white.opacity(0.55))
+                        .foregroundStyle(Space.whitestWhite.opacity(0.6))
                         .offset(x: sin(angle) * numberRadius, y: -cos(angle) * numberRadius)
                 }
 
                 // Hour hand pointing at "now"
                 Capsule()
-                    .fill(.white.opacity(0.9))
+                    .fill(Space.whitestWhite.opacity(0.95))
                     .frame(width: max(1.8, ring * 0.35), height: handLength)
                     .offset(y: -handLength / 2)
                     .rotationEffect(.degrees(fraction(now) * 360))
                 Circle()
-                    .fill(.white)
+                    .fill(Space.whitestWhite)
                     .frame(width: ring * 0.9, height: ring * 0.9)
             }
             .frame(width: side, height: side)
@@ -218,7 +224,7 @@ struct SyncClockFace: View {
 
 // MARK: Pieces
 
-/// Frosted-glass pill so it sits nicely on both the night and golden skies.
+/// Summer's Heat pill with Amethyst text.
 struct SyncCallButton: View {
     let person: WidgetPerson
     var compact = false
@@ -226,11 +232,11 @@ struct SyncCallButton: View {
         Link(destination: DeepLink.call(person.id).url) {
             Text("Call")
                 .font(Night.font(compact ? 9.5 : 12, .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Space.amethyst)
                 .padding(.horizontal, compact ? 9 : 12)
                 .padding(.vertical, compact ? 3 : 4.5)
-                .background(Capsule().fill(.white.opacity(0.16)))
-                .overlay(Capsule().strokeBorder(.white.opacity(0.35), lineWidth: 0.5))
+                .background(Capsule().fill(Space.summersHeat))
+                .shadow(color: Space.summersHeat.opacity(0.35), radius: 4, y: 1)
         }
         .accessibilityLabel("Call \(person.relationship)")
     }
@@ -246,12 +252,12 @@ struct SyncHeader: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(person.relationship)
                     .font(Night.font(compact ? 12 : 15, .bold))
-                    .foregroundStyle(.white.opacity(0.75))
+                    .foregroundStyle(Space.whitestWhite.opacity(0.75))
                     .lineLimit(1).minimumScaleFactor(0.6)
                 Text("\(entry.time(person)) · \(person.city)")
                     .font(Night.font(compact ? 8.5 : 10.5, .regular))
                     .monospacedDigit()
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Space.gettysburgGray.opacity(0.75))
                     .lineLimit(1).minimumScaleFactor(0.7)
             }
             Spacer(minLength: 2)
@@ -291,7 +297,7 @@ struct SyncStatusText: View {
                 Text(entry.realTarget(d), style: .relative)
                     .font(Night.font(titleSize, .bold))
                     .monospacedDigit()
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Space.whitestWhite)
             case .none:
                 title("Not quite yet")
                 sub(Text("No sync in the next 12h"))
@@ -309,14 +315,16 @@ struct SyncStatusText: View {
         Text(s).font(Night.font(titleSize, .bold)).foregroundStyle(look.title)
     }
     private func sub(_ t: Text) -> some View {
-        t.font(Night.font(subSize, .regular)).foregroundStyle(.white.opacity(0.7))
+        t.font(Night.font(subSize, .regular)).foregroundStyle(Space.gettysburgGray)
     }
 }
 
-/// Deep space with nebula wisps and star dust. In sync, a warm golden nebula blooms
-/// behind the clock (the "yellow glow") instead of a flat yellow fill.
+/// Amethyst night sky with Viking Diva nebula wisps and star dust. In sync, a Summer's Heat
+/// glow blooms behind the clock (the "yellow glow") instead of a flat yellow fill.
 struct NightSkyBackground: View {
     let phase: SyncPhase
+    /// Where the clock sits, so the in-sync glow blooms behind it.
+    var glowCenter = UnitPoint(x: 0.5, y: 0.52)
 
     /// Deterministic star field: (x, y, radius, opacity), all relative.
     private static let stars: [(CGFloat, CGFloat, CGFloat, Double)] = {
@@ -333,28 +341,26 @@ struct NightSkyBackground: View {
             let w = geo.size.width, h = geo.size.height, big = max(w, h)
             ZStack {
                 if phase.isInSync {
-                    LinearGradient(colors: [Space.c(0x120C24), Space.c(0x2A1632), Space.c(0x3A1E30)],
+                    LinearGradient(colors: [Space.c(0x2A2140), Space.c(0x433660), Space.amethyst],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
-                    nebula(Space.c(0x9650C8), 0.40, at: UnitPoint(x: 0.15, y: 0.95), radius: big * 0.7)
-                    nebula(Space.c(0xFF9678), 0.22, at: UnitPoint(x: 0.9, y: 0.08), radius: big * 0.5)
-                    RadialGradient(colors: [Space.c(0xFFD696).opacity(0.55), Space.c(0xFFAA78).opacity(0.28), .clear],
-                                   center: UnitPoint(x: 0.5, y: 0.52), startRadius: 0, endRadius: big * 0.58)
+                    nebula(Space.vikingDiva, 0.35, at: UnitPoint(x: 0.15, y: 0.95), radius: big * 0.7)
+                    RadialGradient(colors: [Space.summersHeat.opacity(0.55), Space.summersHeat.opacity(0.22), .clear],
+                                   center: glowCenter, startRadius: 0, endRadius: big * 0.58)
                 } else {
-                    LinearGradient(colors: [Space.c(0x07081A), Space.c(0x0F0F2E), Space.c(0x1A1340)],
+                    LinearGradient(colors: [Space.c(0x241C33), Space.c(0x382C4F), Space.amethyst],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
-                    nebula(Space.c(0x705CFF), 0.38, at: UnitPoint(x: 0.2, y: 0.85), radius: big * 0.7)
-                    nebula(Space.c(0x4696FF), 0.20, at: UnitPoint(x: 0.85, y: 0.15), radius: big * 0.5)
-                    nebula(Space.c(0xBE6EFF), 0.12, at: UnitPoint(x: 0.6, y: 0.55), radius: big * 0.4)
+                    nebula(Space.vikingDiva, 0.30, at: UnitPoint(x: 0.2, y: 0.88), radius: big * 0.7)
+                    nebula(Space.vikingDiva, 0.16, at: UnitPoint(x: 0.88, y: 0.12), radius: big * 0.5)
                 }
                 ForEach(0..<Self.stars.count, id: \.self) { i in
                     let s = Self.stars[i]
-                    Circle().fill(.white.opacity(s.3))
+                    Circle().fill(Space.whitestWhite.opacity(s.3))
                         .frame(width: s.2 * 2, height: s.2 * 2)
                         .position(x: w * s.0, y: h * s.1)
                 }
                 Image(systemName: "sparkle")
                     .font(.system(size: 7))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(Space.whitestWhite.opacity(0.7))
                     .position(x: w * 0.14, y: h * 0.74)
                 ContainerRelativeShape().strokeBorder(.white.opacity(0.10), lineWidth: 0.5)
             }
@@ -385,12 +391,16 @@ struct SyncClockEntryView: View {
                     Image(systemName: "clock").font(.title2).foregroundStyle(SyncLook.champagne)
                     Text("Open Golden Hour to set up your family")
                         .font(Night.font(12, .bold)).multilineTextAlignment(.center)
-                        .foregroundStyle(.white).opacity(textOpacity)
+                        .foregroundStyle(Space.whitestWhite).opacity(textOpacity)
                 }
                 .widgetURL(DeepLink.dashboard.url)
             }
         }
-        .containerBackground(for: .widget) { NightSkyBackground(phase: phase) }
+        .containerBackground(for: .widget) {
+            // Medium puts the clock on the left, so the glow follows it there.
+            NightSkyBackground(phase: phase,
+                               glowCenter: family == .systemMedium ? UnitPoint(x: 0.22, y: 0.52) : UnitPoint(x: 0.5, y: 0.52))
+        }
     }
 
     /// The clock is the hero: it takes all the space the (small) text doesn't.
