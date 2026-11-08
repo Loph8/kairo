@@ -1,0 +1,35 @@
+{
+  "name": "kairo-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist-server",
+    "build:all": "npm run build && npm run build:server",
+    "start": "node server/index.mjs",
+    "waitlist:count": "node -e \"const f=process.env.WAITLIST_FILE||'data/waitlist.jsonl';const fs=require('fs');console.log(fs.existsSync(f)?fs.readFileSync(f,'utf8').split('\\\\n').filter(Boolean).length:0)\""
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.14.0",
+    "typescript": "5.6",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9"
+  }
+}
