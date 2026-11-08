@@ -37,6 +37,9 @@ struct GoldenProvider: AppIntentTimelineProvider {
         var dates = (1...12).map { start.addingTimeInterval(Double($0) * 1800) }
         if let s = first.snapshot {
             dates += s.proposals.map { $0.start.addingTimeInterval(-s.clockOffset) }.filter { $0 > start && $0 < start.addingTimeInterval(6 * 3600) }
+            // Forecast slot boundaries, so the "In Sync" clock flips state when a window opens or closes.
+            dates += (0..<48).map { s.forecastStart.addingTimeInterval(Double($0) * 1800 - s.clockOffset) }
+                .filter { $0 > start && $0 < start.addingTimeInterval(6 * 3600) }
         }
         for d in Set(dates).sorted() { entries.append(Self.entry(at: d, configuration: configuration, reuse: first)) }
         return Timeline(entries: entries, policy: .after(start.addingTimeInterval(30 * 60)))

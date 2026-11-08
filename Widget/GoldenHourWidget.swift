@@ -19,6 +19,7 @@ struct GoldenHourWidget: Widget {
 struct GoldenHourWidgetBundle: WidgetBundle {
     var body: some Widget {
         GoldenHourWidget()
+        SyncClockWidget()
         GoldenHourLiveActivity()
     }
 }
