@@ -164,8 +164,8 @@ struct SyncClockFace: View {
             let handLength = r * 0.52
 
             ZStack {
-                // Saturn ring, back half: tucked behind the clock (hidden where it crosses the dial)
-                saturnRing(d, from: 0.5, to: 1)
+                // Saturn ring: sits behind the clock, so it only shows outside the dial
+                saturnRing(d)
                     .mask {
                         ZStack {
                             Rectangle().frame(width: d * 2, height: d * 2)
@@ -193,9 +193,6 @@ struct SyncClockFace: View {
                         .frame(width: d, height: d)
                         .shadow(color: look.optimal.opacity(look.glowOpacity), radius: ring * (inSync ? 0.75 : 0.45))
                 }
-
-                // Saturn ring, front half: passes in front of the clock
-                saturnRing(d, from: 0, to: 0.5)
 
                 // Hour ticks (skipped where the 12 / 3 / 6 / 9 numerals sit)
                 ForEach(0..<12, id: \.self) { h in
@@ -236,9 +233,8 @@ struct SyncClockFace: View {
 
     /// A barely-there, tilted planetary ring around the dial: thin, very low opacity,
     /// only a little wider than the clock.
-    private func saturnRing(_ d: CGFloat, from: CGFloat, to: CGFloat) -> some View {
+    private func saturnRing(_ d: CGFloat) -> some View {
         Ellipse()
-            .trim(from: from, to: to)
             .stroke(Space.whitestWhite.opacity(0.2), style: StrokeStyle(lineWidth: max(0.5, ring * 0.09), lineCap: .round))
             .frame(width: d * 1.22, height: d * 0.26)
             .rotationEffect(.degrees(-16))
